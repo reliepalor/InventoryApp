@@ -1,127 +1,57 @@
-<p>navbar works!</p>
-<nav class="w-full border-b bg-white/80 backdrop-blur">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6">
-    <div class="flex h-14 items-center justify-between">
+<nav class="w-full border-b bg-white">
+  <div class="max-w-6xl mx-auto flex items-center justify-between px-4 py-3">
 
-      <!-- LEFT: Logo -->
-      <div class="flex items-center gap-2">
-        <div class="h-8 w-8 rounded-xl bg-violet-600 text-white flex items-center justify-center text-sm font-semibold">
-          IA
-        </div>
-        <span class="text-base sm:text-lg font-semibold tracking-tight text-slate-900">
-          InventoryApp
-        </span>
-      </div>
-
-      <!-- CENTER: Desktop nav links -->
-      <div class="hidden md:flex items-center gap-6">
-        <a
-          routerLink="/dashboard"
-          routerLinkActive="nav-link-active"
-          class="nav-link"
-          (click)="closeMobile()"
-        >
-          Dashboard
-        </a>
-
-        <a
-          routerLink="/inventory/laptops"
-          routerLinkActive="nav-link-active"
-          class="nav-link"
-          (click)="closeMobile()"
-        >
-          Laptops
-        </a>
-
-        <a
-          routerLink="/inventory/desktops"
-          routerLinkActive="nav-link-active"
-          class="nav-link"
-          (click)="closeMobile()"
-        >
-          Desktops
-        </a>
-
-        <a
-          routerLink="/reports"
-          routerLinkActive="nav-link-active"
-          class="nav-link"
-          (click)="closeMobile()"
-        >
-          Reports
-        </a>
-      </div>
-
-      <!-- RIGHT: Desktop action / user placeholder -->
-      <div class="hidden md:flex items-center gap-3">
-        <button
-          class="rounded-full border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50"
-        >
-          Help
-        </button>
-        <div class="h-8 w-8 rounded-full bg-slate-200 flex items-center justify-center text-xs font-semibold text-slate-700">
-          U
-        </div>
-      </div>
-
-      <!-- MOBILE: Hamburger button -->
+    <!-- LEFT: LOGO -->
+    <div class="flex items-center gap-3">
       <button
-        type="button"
-        class="inline-flex items-center justify-center md:hidden p-2 rounded-full border border-slate-200 text-slate-700 hover:bg-slate-50"
-        (click)="toggleMobile()"
+        shcnBtn
+        variant="ghost"
+        class="md:hidden"
+        (click)="mobileMenu.open()"
       >
-        <span *ngIf="!mobileOpen">☰</span>
-        <span *ngIf="mobileOpen">✕</span>
+        <lucide-menu class="w-5 h-5"></lucide-menu>
       </button>
+
+      <span class="font-semibold text-lg">InventoryApp</span>
     </div>
 
-    <!-- MOBILE MENU -->
-    <div
-      class="md:hidden pb-3"
-      *ngIf="mobileOpen"
-    >
-      <div class="mt-2 space-y-1 rounded-2xl border border-slate-100 bg-white p-3 shadow-sm">
-        <a
-          routerLink="/dashboard"
-          routerLinkActive="nav-link-active"
-          class="nav-link block px-2 py-1.5 rounded-lg"
-          (click)="closeMobile()"
-        >
-          Dashboard
-        </a>
-
-        <a
-          routerLink="/inventory/laptops"
-          routerLinkActive="nav-link-active"
-          class="nav-link block px-2 py-1.5 rounded-lg"
-          (click)="closeMobile()"
-        >
-          Laptops
-        </a>
-
-        <a
-          routerLink="/inventory/desktops"
-          routerLinkActive="nav-link-active"
-          class="nav-link block px-2 py-1.5 rounded-lg"
-          (click)="closeMobile()"
-        >
-          Desktops
-        </a>
-
-        <a
-          routerLink="/reports"
-          routerLinkActive="nav-link-active"
-          class="nav-link block px-2 py-1.5 rounded-lg"
-          (click)="closeMobile()"
-        >
-          Reports
-        </a>
-
-        <div class="border-t border-slate-100 mt-2 pt-2 flex items-center justify-between px-2 text-xs text-slate-500">
-          <span>Signed in as</span>
-          <span class="font-medium text-slate-700">User</span>
-        </div>
-      </div>
+    <!-- CENTER: NAV LINKS (Desktop Only) -->
+    <div class="hidden md:flex items-center gap-6 text-sm text-slate-600">
+      <a routerLink="/dashboard" class="hover:text-black">Dashboard</a>
+      <a routerLink="/inventory/laptops" class="hover:text-black">Laptops</a>
+      <a routerLink="/inventory/desktops" class="hover:text-black">Desktops</a>
+      <a routerLink="/reports" class="hover:text-black">Reports</a>
     </div>
+
+    <!-- RIGHT: USER MENU -->
+    <shadcn-dropdown-menu>
+      <button shcnBtn variant="ghost" class="flex items-center gap-2">
+        <lucide-user class="w-5 h-5"></lucide-user>
+      </button>
+
+      <shadcn-dropdown-menu-content class="w-40">
+        <shadcn-dropdown-menu-item>
+          <lucide-user class="w-4 h-4 mr-2"></lucide-user>
+          Profile
+        </shadcn-dropdown-menu-item>
+
+        <shadcn-dropdown-menu-item>
+          <lucide-log-out class="w-4 h-4 mr-2"></lucide-log-out>
+          Logout
+        </shadcn-dropdown-menu-item>
+      </shadcn-dropdown-menu-content>
+    </shadcn-dropdown-menu>
   </div>
+
+  <!-- MOBILE SLIDE MENU -->
+  <shadcn-sheet #mobileMenu>
+    <shadcn-sheet-content side="left" class="w-64 p-4 space-y-4">
+      <h2 class="font-semibold text-lg mb-4">Menu</h2>
+
+      <a routerLink="/dashboard" class="block py-2">Dashboard</a>
+      <a routerLink="/inventory/laptops" class="block py-2">Laptops</a>
+      <a routerLink="/inventory/desktops" class="block py-2">Desktops</a>
+      <a routerLink="/reports" class="block py-2">Reports</a>
+    </shadcn-sheet-content>
+  </shadcn-sheet>
 </nav>

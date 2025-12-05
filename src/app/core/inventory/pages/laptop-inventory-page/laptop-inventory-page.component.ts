@@ -19,29 +19,16 @@ export class LaptopInventoryPageComponent implements OnInit {
 
   // top filters
   search = '';
-  brandFilter = 'All';
-  statusFilter = 'All';
 
-  // per-column filters (for table header row)
-  columnFilters: { [key: string]: string } = {
-    systemModel: '',
-    motherboard: '',
-    socket: '',
-    chipset: '',
-    processorSpec: '',
-    ramBrandModel: '',
-    ramSize: '',
-    storageModel: '',
-    storageSize: '',
-    videoCardModel: '',
-    videoCardMemory: '',
-    osType: '',
-    officeType: ''
-  };
+  // new important filters
+  modelFilter = 'All';
+  processorFilter = 'All';
+  osFilter = 'All';
 
-  // options
-  brands: string[] = [];
-  statuses: string[] = [];
+  // options for new filters
+  models: string[] = [];
+  processors: string[] = [];
+  osList: string[] = [];
 
   constructor(private service: LaptopInventoryService) {}
 
@@ -57,8 +44,9 @@ export class LaptopInventoryPageComponent implements OnInit {
     const unique = (arr: (string | undefined | null)[]) =>
       Array.from(new Set(arr.filter(v => !!v))) as string[];
 
-    this.brands = ['All', ...unique(items.map(i => i.systemBrand))];
-    this.statuses = ['All', ...unique(items.map(i => i.status))];
+    this.models = ['All', ...unique(items.map(i => i.systemModel))];
+    this.processors = ['All', ...unique(items.map(i => i.processorSpec))];
+    this.osList = ['All', ...unique(items.map(i => i.osType))];
   }
 
   applyFilters() {
@@ -67,7 +55,7 @@ export class LaptopInventoryPageComponent implements OnInit {
     this.filteredItems = this.allItems.filter(item => {
       const anyItem = item as any;
 
-      // global search across some fields
+      // 1) Global search across some fields
       const matchesSearch =
         !searchLower ||
         (item.systemModel ?? '').toLowerCase().includes(searchLower) ||
@@ -78,25 +66,26 @@ export class LaptopInventoryPageComponent implements OnInit {
 
       if (!matchesSearch) return false;
 
-      // brand / status filters
-      const matchesBrand =
-        this.brandFilter === 'All' || item.systemBrand === this.brandFilter;
+      // 2) Model filter
+      const matchesModel =
+        this.modelFilter === 'All' ||
+        item.systemModel === this.modelFilter;
 
-      const matchesStatus =
-        this.statusFilter === 'All' || item.status === this.statusFilter;
+      if (!matchesModel) return false;
 
-      if (!matchesBrand || !matchesStatus) return false;
+      // 3) Processor filter
+      const matchesProcessor =
+        this.processorFilter === 'All' ||
+        item.processorSpec === this.processorFilter;
 
-      // per-column filters
-      for (const [key, filterValue] of Object.entries(this.columnFilters)) {
-        const f = filterValue.trim().toLowerCase();
-        if (!f) continue;
+      if (!matchesProcessor) return false;
 
-        const rawVal = (anyItem[key] ?? '').toString().toLowerCase();
-        if (!rawVal.includes(f)) {
-          return false;
-        }
-      }
+      // 4) OS filter
+      const matchesOs =
+        this.osFilter === 'All' ||
+        item.osType === this.osFilter;
+
+      if (!matchesOs) return false;
 
       return true;
     });

@@ -1,21 +1,22 @@
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import {
+  ButtonModule,
+  DropdownMenuModule,
+  AvatarModule,
+  SheetModule
+} from 'shadcn-ng';
+import { LucideAngularModule, Menu, User, LogOut } from 'lucide-angular';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [RouterModule],
-  templateUrl: './navbar.component.html',
-  styleUrls: ['./navbar.component.css']
+  imports: [
+    ButtonModule,
+    DropdownMenuModule,
+    AvatarModule,
+    SheetModule,
+    LucideAngularModule.pick({ Menu, User, LogOut })
+  ],
+  templateUrl: './navbar.component.html'
 })
-export class NavbarComponent {
-  mobileOpen = false;
-
-  toggleMobile() {
-    this.mobileOpen = !this.mobileOpen;
-  }
-
-  closeMobile() {
-    this.mobileOpen = false;
-  }
-}
+export class Navbar{}

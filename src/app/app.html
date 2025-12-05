@@ -1,5 +1,15 @@
-<app-navbar />
+<!-- Layout when sidebar is visible (dashboard, inventory, etc.) -->
+<div *ngIf="showNavbar" class="flex h-screen bg-slate-50">
+  <!-- Sidebar -->
+  <app-navbar></app-navbar>
 
-<main class="min-h-[calc(100vh-56px)] bg-slate-50">
+  <!-- Main content -->
+  <main class="flex-1 overflow-auto p-6">
+    <router-outlet></router-outlet>
+  </main>
+</div>
+
+<!-- Layout for auth pages (login, register) -->
+<div *ngIf="!showNavbar">
   <router-outlet></router-outlet>
-</main>
+</div>
