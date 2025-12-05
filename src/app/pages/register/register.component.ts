@@ -19,7 +19,7 @@ export class RegisterComponent {
 
   constructor(private fb: FormBuilder, private auth: AuthService, private router: Router) {
     this.form = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
+      username: ['', [Validators.required]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', Validators.required]
     }, { validators: (group) => this.passwordsMatch(group) });
@@ -35,8 +35,8 @@ export class RegisterComponent {
     this.loading = true;
     this.error = null;
 
-    const { email, password } = this.form.value;
-    this.auth.register({ email, password }).subscribe({
+    const { username, password } = this.form.value;
+    this.auth.register({ username, password }).subscribe({
       next: () => {
         this.loading = false;
         // optionally auto-login — call login() or redirect to login page

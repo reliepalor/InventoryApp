@@ -26,18 +26,18 @@ export class LoginComponent {
     private router: Router
   ) {
     this.form = this.fb.group({
-      email: ['', [Validators.required, Validators.email]], // ⬅ prefill
-      password: ['', [Validators.required, Validators.minLength(6)]], // ⬅ prefill
+      username: ['', [Validators.required]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
     });
   }
 
   submit() {
     if (this.form.invalid) return;
 
-    const { email, password } = this.form.value;
+    const { username, password } = this.form.value;
 
-    // 🔥 STATIC TEST LOGIN
-    if (email === 'admin@gmail.com' && password === 'admin123') {
+    // 🔥 STATIC TEST LOGIN (local fallback)
+    if (username === 'admin' && password === 'admin123') {
       localStorage.setItem('auth_token', 'static-test-token');
       this.router.navigate(['/dashboard']);
       return;
@@ -54,7 +54,7 @@ export class LoginComponent {
       },
       error: (err) => {
         this.loading = false;
-        this.error = err?.error?.message || 'Login Failed';
+        this.error = err?.error || err?.message || 'Login Failed';
       }
     });
   }

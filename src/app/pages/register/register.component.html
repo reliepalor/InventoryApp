@@ -49,23 +49,22 @@
       (ngSubmit)="submit()"
       class="w-full max-w-sm sm:max-w-md space-y-5"
     >
-      <!-- Email -->
+      <!-- Username -->
       <div>
-        <label for="email" class="text-gray-700 text-sm font-medium">Email</label>
+        <label for="username" class="text-gray-700 text-sm font-medium">Username</label>
         <input
-          id="email"
-          type="email"
-          formControlName="email"
-          placeholder="you@example.com"
+          id="username"
+          type="text"
+          formControlName="username"
+          placeholder="choose a username"
           class="w-full bg-white border border-gray-300 rounded-lg p-3 mt-1 text-[#1F2937]
                  focus:ring-2 focus:ring-[#4CAF50] outline-none"
         />
         <div
-          *ngIf="form.get('email')?.invalid && form.get('email')?.touched"
+          *ngIf="form.get('username')?.invalid && form.get('username')?.touched"
           class="text-red-500 text-xs mt-1"
         >
-          <span *ngIf="form.get('email')?.errors?.['required']">Email is required</span>
-          <span *ngIf="form.get('email')?.errors?.['email']">Invalid email format</span>
+          <span *ngIf="form.get('username')?.errors?.['required']">Username is required</span>
         </div>
       </div>
 

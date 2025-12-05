@@ -34,21 +34,21 @@
 
     <h1 class="font-inter text-3xl md:text-4xl font-semibold mb-8 text-center">Login</h1>
 
-    <!-- email -->
+    <!-- username -->
     <form
       [formGroup]="form"
       (ngSubmit)="submit()"
       class="w-full max-w-sm sm:max-w-md space-y-5"
     >
       <div>
-        <label for="email" class="text-gray-700 text-sm">Email</label>
+        <label for="username" class="text-gray-700 text-sm">Username</label>
         <input
-          id="email"
-          formControlName="email"
-          type="email"
+          id="username"
+          formControlName="username"
+          type="text"
           class="w-full bg-white border border-gray-300 rounded-lg p-3 mt-1 text-[#1F2937]
                  focus:ring-2 focus:ring-[#4CAF50] outline-none"
-          placeholder="you@example.com"
+          placeholder="your username"
         />
       </div>
 

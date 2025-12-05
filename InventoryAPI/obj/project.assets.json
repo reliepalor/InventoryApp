@@ -3487,11 +3487,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\danda\\source\\repos\\InventoryAPI\\InventoryAPI\\InventoryAPI.csproj",
+      "projectUniqueName": "C:\\Users\\danda\\OneDrive\\Documents\\GitHub\\InventoryApp\\InventoryAPI\\InventoryAPI.csproj",
       "projectName": "InventoryAPI",
-      "projectPath": "C:\\Users\\danda\\source\\repos\\InventoryAPI\\InventoryAPI\\InventoryAPI.csproj",
+      "projectPath": "C:\\Users\\danda\\OneDrive\\Documents\\GitHub\\InventoryApp\\InventoryAPI\\InventoryAPI.csproj",
       "packagesPath": "C:\\Users\\danda\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\danda\\source\\repos\\InventoryAPI\\InventoryAPI\\obj\\",
+      "outputPath": "C:\\Users\\danda\\OneDrive\\Documents\\GitHub\\InventoryApp\\InventoryAPI\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
