@@ -24,5 +24,15 @@ export const routes: Routes = [
         path: 'motherboard',
         loadComponent: () => import('./features/inventory/pages/motherboard/motherboard').then(m => m.MotherboardPageComponent),
         canActivate: [authGuard]
+    },
+    {
+        path: 'office-installed',
+        loadComponent: () => import('./features/inventory/pages/office-installed/office-installed').then(m => m.OfficeInstalled),
+        canActivate: [authGuard]
+    },
+    {
+        path: 'os-installed',
+        loadComponent: () => import('./features/inventory/pages/os-installed/os-installed').then(m => m.OsInstalled),
+        canActivate: [authGuard]
     }
 ];
