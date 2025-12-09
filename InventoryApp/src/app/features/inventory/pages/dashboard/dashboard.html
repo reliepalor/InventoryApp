@@ -1,0 +1,99 @@
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-green-50/30">
+  <app-sidebar></app-sidebar>
+  <app-navbar></app-navbar>
+  
+  <main 
+    [class.ml-72]="isSidebarOpen"
+    [class.ml-20]="!isSidebarOpen"
+    class="transition-all duration-300 pt-16">
+    <div class="p-6 lg:p-8">
+      <!-- Header -->
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">Dashboard</h1>
+        <p class="text-gray-600">Welcome to Inventy Inventory Management System</p>
+      </div>
+
+      <!-- Stats Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white border-2 border-gray-200 rounded-lg p-6 hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
+          <div class="flex items-center justify-between mb-4">
+            <div class="p-3 bg-blue-100 rounded-lg">
+              <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
+              </svg>
+            </div>
+            <span class="text-2xl font-bold text-gray-800">245</span>
+          </div>
+          <h3 class="text-gray-600 font-semibold">Total Devices</h3>
+        </div>
+
+        <div class="bg-white border-2 border-gray-200 rounded-lg p-6 hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
+          <div class="flex items-center justify-between mb-4">
+            <div class="p-3 bg-green-100 rounded-lg">
+              <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+            <span class="text-2xl font-bold text-gray-800">198</span>
+          </div>
+          <h3 class="text-gray-600 font-semibold">Active Items</h3>
+        </div>
+
+        <div class="bg-white border-2 border-gray-200 rounded-lg p-6 hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
+          <div class="flex items-center justify-between mb-4">
+            <div class="p-3 bg-yellow-100 rounded-lg">
+              <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+            <span class="text-2xl font-bold text-gray-800">32</span>
+          </div>
+          <h3 class="text-gray-600 font-semibold">Pending</h3>
+        </div>
+
+        <div class="bg-white border-2 border-gray-200 rounded-lg p-6 hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
+          <div class="flex items-center justify-between mb-4">
+            <div class="p-3 bg-red-100 rounded-lg">
+              <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+              </svg>
+            </div>
+            <span class="text-2xl font-bold text-gray-800">15</span>
+          </div>
+          <h3 class="text-gray-600 font-semibold">Issues</h3>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="bg-white border-2 border-gray-200 rounded-lg p-6">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">Recent Activity</h2>
+        <div class="space-y-4">
+          <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
+            <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+            <div class="flex-1">
+              <p class="text-gray-800 font-medium">New device added</p>
+              <p class="text-sm text-gray-500">Dell Laptop - Model XPS 15</p>
+            </div>
+            <span class="text-sm text-gray-500">2 hours ago</span>
+          </div>
+          <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
+            <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+            <div class="flex-1">
+              <p class="text-gray-800 font-medium">Inventory updated</p>
+              <p class="text-sm text-gray-500">RAM modules stock updated</p>
+            </div>
+            <span class="text-sm text-gray-500">5 hours ago</span>
+          </div>
+          <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
+            <div class="w-2 h-2 bg-yellow-500 rounded-full"></div>
+            <div class="flex-1">
+              <p class="text-gray-800 font-medium">Maintenance scheduled</p>
+              <p class="text-sm text-gray-500">Server maintenance planned</p>
+            </div>
+            <span class="text-sm text-gray-500">1 day ago</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

@@ -1,0 +1,20 @@
+<nav class="fixed top-0 right-0 h-16 bg-white border-b-2 border-gray-200 shadow-sm z-30 transition-all duration-300"
+     [class.left-72]="isSidebarOpen"
+     [class.left-20]="!isSidebarOpen">
+  <div class="h-full px-6 flex items-center justify-between">
+    <!-- Toggle Button -->
+    <button 
+      (click)="toggleSidebar()"
+      class="p-2 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 transition-all duration-200">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path *ngIf="isSidebarOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        <path *ngIf="!isSidebarOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+      </svg>
+    </button>
+
+    <!-- Navbar Content (You can add more items here) -->
+    <div class="flex items-center gap-4">
+      <!-- Add navbar items like search, notifications, profile, etc. -->
+    </div>
+  </div>
+</nav>

@@ -1,0 +1,114 @@
+<aside 
+  [class.w-72]="isSidebarOpen"
+  [class.w-20]="!isSidebarOpen"
+  class="h-screen bg-gradient-to-br from-gray-50 to-green-50/30 border-r-2 border-gray-200 fixed left-0 top-0 overflow-y-auto shadow-lg scrollbar-hide transition-all duration-300 z-40">
+  <nav class="flex flex-col gap-2 transition-all duration-300" [class.p-6]="isSidebarOpen" [class.p-2]="!isSidebarOpen">
+    <!-- Logo & Brand -->
+    <div class="mb-6 pb-6 border-b-2 border-gray-200">
+      <div class="flex items-center transition-all duration-300" [class.justify-center]="isSidebarOpen" [class.flex-col]="!isSidebarOpen" [class.gap-2]="!isSidebarOpen">
+        <div class="flex items-center justify-center flex-shrink-0 transition-all duration-300" [class.w-20]="isSidebarOpen" [class.h-20]="isSidebarOpen" [class.w-12]="!isSidebarOpen" [class.h-12]="!isSidebarOpen">
+          <svg 
+            class="w-full h-full"
+            viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"
+          >
+            <defs>
+              <linearGradient id="invGreen" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#66D17A"/>
+                <stop offset="100%" stop-color="#2E8E46"/>
+              </linearGradient>
+              <filter id="bagShadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="rgba(0,0,0,0.28)" />
+              </filter>
+            </defs>
+            <g filter="url(#bagShadow)">
+              <rect x="40" y="60" width="120" height="110" rx="22" fill="url(#invGreen)" />
+              <path d="M70 60 Q70 35 100 35 Q130 35 130 60"
+                    stroke="#ffffff" stroke-width="12" fill="none" stroke-linecap="round" />
+              <text x="100" y="135" font-size="38" font-weight="700"
+                    text-anchor="middle" fill="#ffffff">kmbi</text>
+            </g>
+          </svg>
+        </div>
+        <span *ngIf="isSidebarOpen" class="text-3xl font-bold text-green-600 leading-none mt-3">Inventy</span>
+      </div>
+    </div>
+
+    <!-- Dashboard -->
+    <a routerLink="/dashboard" routerLinkActive="active" 
+       [title]="!isSidebarOpen ? 'Dashboard' : ''"
+       class="flex items-center gap-3 bg-white border-2 border-gray-200 rounded-lg text-gray-700 font-semibold transition-all duration-200 hover:border-green-500 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 [&.active]:bg-green-600 [&.active]:text-white [&.active]:border-green-600 [&.active]:shadow-lg"
+       [class.px-4]="isSidebarOpen" [class.py-3]="isSidebarOpen" [class.p-3]="!isSidebarOpen" [class.justify-center]="!isSidebarOpen">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+      </svg>
+      <span *ngIf="isSidebarOpen">Dashboard</span>
+    </a>
+    
+    <!-- Inventory Section Header -->
+    <button 
+      type="button"
+      [title]="!isSidebarOpen ? 'Inventory' : ''"
+      class="flex items-center gap-3 bg-white border-2 border-gray-200 rounded-lg text-gray-700 font-semibold transition-all duration-200 hover:border-green-500 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 cursor-default mt-2"
+      [class.px-4]="isSidebarOpen" [class.py-3]="isSidebarOpen" [class.p-3]="!isSidebarOpen" [class.justify-center]="!isSidebarOpen">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+      </svg>
+      <span *ngIf="isSidebarOpen">Inventory</span>
+    </button>
+    
+    <!-- Maintenance Dropdown -->
+    <div class="flex flex-col" *ngIf="isSidebarOpen">
+      <button 
+        [class.active]="isMaintenanceOpen"
+        (click)="toggleMaintenance()"
+        type="button"
+        class="flex items-center justify-between gap-3 px-4 py-3 bg-white border-2 border-gray-200 rounded-lg text-gray-700 font-semibold transition-all duration-200 hover:border-green-500 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 w-full [&.active]:border-green-500">
+        <div class="flex items-center gap-3">
+          <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          </svg>
+          <span>Maintenance</span>
+        </div>
+        <svg class="w-4 h-4 transition-transform duration-200 text-gray-500" [class.rotate-180]="isMaintenanceOpen" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+        </svg>
+      </button>
+
+      <div class="overflow-hidden transition-all duration-300" [class.max-h-0]="!isMaintenanceOpen" [class.max-h-[600px]]="isMaintenanceOpen">
+        <div class="mt-2 space-y-1">
+          @for (item of maintenanceItems; track item.route) {
+            <a [routerLink]="item.route" routerLinkActive="active" 
+               class="block px-4 py-2.5 pl-12 bg-white border-2 border-gray-200 rounded-lg text-gray-600 text-sm font-medium transition-all duration-200 hover:border-green-300 hover:bg-green-50 hover:text-green-700 [&.active]:bg-green-100 [&.active]:text-green-700 [&.active]:border-green-400">
+              {{ item.label }}
+            </a>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Maintenance Icon (Collapsed Sidebar) -->
+    <button
+      *ngIf="!isSidebarOpen"
+      (click)="expandAndOpenMaintenance()"
+      type="button"
+      title="Maintenance"
+      class="flex items-center justify-center p-3 bg-white border-2 border-gray-200 rounded-lg text-gray-700 transition-all duration-200 hover:border-green-500 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 w-full">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+      </svg>
+    </button>
+
+    <!-- Logout -->
+    <button (click)="logout()" type="button"
+            [title]="!isSidebarOpen ? 'Logout' : ''"
+            class="flex items-center gap-3 bg-white border-2 border-red-200 rounded-lg text-red-600 font-semibold transition-all duration-200 hover:bg-red-600 hover:text-white hover:border-red-600 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 w-full border-t-2 border-t-gray-200"
+            [class.px-4]="isSidebarOpen" [class.py-3]="isSidebarOpen" [class.p-3]="!isSidebarOpen" [class.justify-center]="!isSidebarOpen">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+      </svg>
+      <span *ngIf="isSidebarOpen">Logout</span>
+    </button>
+  </nav>
+</aside>
