@@ -1,6 +1,9 @@
 import { Dashboard } from './features/inventory/pages/dashboard/dashboard';
 import { Routes } from '@angular/router';
 import { authGuard } from './features/services/auth.guard';
+import { StorageModelPageComponent } from './features/inventory/pages/storage-model/storage-model';
+import { VideocardMemoryPageComponent } from './features/inventory/pages/videocard-memory/videocard-memory';
+import { VideocardModelPageComponent } from './features/inventory/pages/videocard-model/videocard-model';
 
 export const routes: Routes = [
     {
@@ -34,5 +37,44 @@ export const routes: Routes = [
         path: 'os-installed',
         loadComponent: () => import('./features/inventory/pages/os-installed/os-installed').then(m => m.OsInstalled),
         canActivate: [authGuard]
+    },
+    {
+        path: 'processor',
+        loadComponent: () => import('./features/inventory/pages/processor/processor').then(m => m.ProcessorPageComponent),
+        canActivate: [authGuard]
+    },
+    {
+        path: 'ram-model',
+        loadComponent: () => import('./features/inventory/pages/ram-model/ram-model').then(m => m.RamModelPageComponent),
+        canActivate: [authGuard]
+    },
+    {
+        path: 'ram-size',
+        loadComponent: () => import('./features/inventory/pages/ram-size/ram-size').then(m => m.RamSizePageComponent),
+        canActivate: [authGuard]
+    },
+    {
+        path: 'storage-model',
+        loadComponent: () => import('./features/inventory/pages/storage-model/storage-model').then(m => StorageModelPageComponent),
+        canActivate: [authGuard]
+    },
+    {
+        path: 'storage-size',
+        loadComponent: () => import('./features/inventory/pages/storage-size/storage-size').then(m => StorageModelPageComponent),
+        canActivate: [authGuard]
+    },
+    {
+        path: 'videocard-memory',
+        loadComponent: () => import('./features/inventory/pages/videocard-memory/videocard-memory').then(m => VideocardMemoryPageComponent),
+        canActivate: [authGuard]
+    },
+    {
+        path: 'videocard-model',
+        loadComponent: () => import('./features/inventory/pages/videocard-model/videocard-model').then(m => VideocardModelPageComponent),
+        canActivate: [authGuard]
     }
+
+
+
+
 ];

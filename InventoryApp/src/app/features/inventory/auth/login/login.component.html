@@ -103,6 +103,12 @@
           <span *ngIf="isLoading">Signing In...</span>
         </button>
 
+        <!-- Dev demo buttons (only when static auth is enabled) 
+        <div *ngIf="env?.authStatic?.enabled" class="flex gap-2 justify-center pt-2">
+          <button type="button" (click)="fillDemoCredentials('admin')" class="px-3 py-2 text-sm rounded-md border border-green-600 text-green-700 hover:bg-green-50">Fill admin</button>
+          <button type="button" (click)="fillDemoCredentials('user')" class="px-3 py-2 text-sm rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50">Fill user</button>
+        </div>
+        -->
         <!-- Sign Up Link -->
         <p class="text-center text-sm text-gray-600 pt-2">
           Don't have an account? 

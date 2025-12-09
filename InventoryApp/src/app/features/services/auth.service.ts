@@ -1,6 +1,8 @@
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap, map, catchError, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
+import { tap, map, catchError } from 'rxjs/operators';
+import { delay as rxDelay } from 'rxjs/operators';
 import { isPlatformBrowser } from '@angular/common';
 import { environment } from '../environments/environment';
 
@@ -16,6 +18,11 @@ export class AuthService {
   private apiUrl = environment.apiUrl;
   private tokenKey = 'auth_token';
   private userKey = 'auth_user';
+
+  // static config
+  private staticEnabled = !!(environment as any)?.authStatic?.enabled;
+  private staticUsers: { username: string; password: string; token: string }[] = (environment as any)?.authStatic?.users || [];
+  private staticDelay = (environment as any)?.authStatic?.delayMs ?? 300;
 
   constructor(private http: HttpClient, @Inject(PLATFORM_ID) private platformId: Object) {}
 
@@ -34,6 +41,7 @@ export class AuthService {
       map(res => res)
     ); 
   }
+
   private buildEndpointCandidates(action: 'login' | 'register'): string[] {
     const cfg = environment as any;
     const configured = cfg?.authPaths?.[action] as string | undefined;
@@ -57,7 +65,7 @@ export class AuthService {
       return this.http.post<T>(url, body, { withCredentials }).pipe(
         catchError(err => {
           const status = err?.status;
-          // Try next path on 404/405/400 indicating wrong endpoint path
+          // Try next path on 404/405 indicating wrong endpoint path
           if (index + 1 < paths.length && (status === 404 || status === 405)) {
             return tryPost(index + 1);
           }
@@ -67,6 +75,7 @@ export class AuthService {
     };
     return tryPost(0);
   }
+
   private normalizeError(err: any) {
     const e = err?.error ?? err;
     const modelState = e?.errors || e?.ModelState;
@@ -95,6 +104,11 @@ export class AuthService {
   }
 
   login(data: LoginRequest): Observable<LoginResponse> {
+    // If static auth is enabled, short-circuit to static login
+    if (this.staticEnabled) {
+      return this.loginStatic(data);
+    }
+
     const payload = {
       username: data.username.trim(),
       password: data.password,
@@ -110,6 +124,29 @@ export class AuthService {
       })
     );
   }
+
+  // static login implementation
+  private loginStatic(data: LoginRequest): Observable<LoginResponse> {
+    const username = (data.username || '').trim();
+    const password = data.password || '';
+
+    const found = this.staticUsers.find(u => u.username === username && u.password === password);
+
+    if (!found) {
+      // simulate HTTP-style error shape and delay
+      return throwError(() => ({ status: 401, message: 'Invalid username or password' })).pipe(rxDelay(this.staticDelay));
+    }
+
+    const res: LoginResponse = { token: found.token, username: found.username };
+    if (res && res.token) {
+      this.setToken(res.token);
+      if (this.isBrowser) {
+        localStorage.setItem(this.userKey, JSON.stringify({ username: found.username }));
+      }
+    }
+    return of(res).pipe(rxDelay(this.staticDelay));
+  }
+
   getToken(): string | null {
     if (!this.isBrowser) return null;
     return localStorage.getItem(this.tokenKey);
@@ -131,13 +168,23 @@ export class AuthService {
   private isTokenExpired(token: string): boolean {
     try {
       const payload = this.decodeToken(token);
-      if (!payload || !payload.exp) return true;
-      
-      // Check if token is expired (exp is in seconds, Date.now() is in milliseconds)
+
+      // If token can't be decoded and static mode enabled, treat as NOT expired
+      if (!payload) {
+        return this.staticEnabled ? false : true;
+      }
+
+      if (!payload.exp) {
+        // no exp claim: accept when static, otherwise treat as expired
+        return this.staticEnabled ? false : true;
+      }
+
+      // exp is in seconds; Date.now() is ms
       const expirationTime = payload.exp * 1000;
       return Date.now() >= expirationTime;
     } catch (error) {
-      return true;
+      // On error, if static mode is enabled, do not mark expired.
+      return this.staticEnabled ? false : true;
     }
   }
   

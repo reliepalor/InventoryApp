@@ -20,13 +20,13 @@ export class Sidebar {
     { label: 'Motherboard', route: '/motherboard' },
     { label: 'Office Installed', route: '/office-installed' },
     { label: 'OS Installed', route: '/os-installed' },
-    { label: 'Processor', route: '/inventory/maintenance/processor' },
-    { label: 'RAM Model', route: '/inventory/maintenance/ram-model' },
-    { label: 'RAM Size', route: '/inventory/maintenance/ram-size' },
-    { label: 'Storage Model', route: '/inventory/maintenance/storage-model' },
-    { label: 'Storage Size', route: '/inventory/maintenance/storage-size' },
-    { label: 'Video Card Memory', route: '/inventory/maintenance/video-card-memory' },
-    { label: 'Video Card Model', route: '/inventory/maintenance/video-card-model' },
+    { label: 'Processor', route: '/processor' },
+    { label: 'RAM Model', route: '/ram-model' },
+    { label: 'RAM Size', route: '/ram-size' },
+    { label: 'Storage Model', route: '/storage-model' },
+    { label: 'Storage Size', route: '/storage-size' },
+    { label: 'Video Card Memory', route: '/videocard-memory' },
+    { label: 'Video Card Model', route: '/videocard-model' },
   ];
 
   private authService = inject(AuthService);
