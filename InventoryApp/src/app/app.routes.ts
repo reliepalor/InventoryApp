@@ -18,6 +18,16 @@ export const routes: Routes = [
         loadComponent: () => import('./features/inventory/pages/dashboard/dashboard').then(m => m.Dashboard),
         canActivate: [authGuard]
     },
+    {
+        path: 'inventory',
+        loadComponent: () => import('./features/inventory/pages/inventory/inventory').then(m => m.InventoryPageComponent),
+        canActivate: [authGuard]
+    },
+    {
+        path: 'brand',
+        loadComponent: () => import('./features/inventory/pages/brand/brand').then(m => m.BrandPageComponent),
+        canActivate: [authGuard]
+    },
     { 
         path: 'model', 
         loadComponent: () => import('./features/inventory/pages/model/model').then(m => m.ModelPageComponent),

@@ -1,4 +1,4 @@
-// videocard-model.ts
+// src/app/features/inventory/pages/videocard-model/videocard-model.ts
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -6,8 +6,7 @@ import { Navbar } from '../../components/navbar/navbar';
 import { Sidebar } from '../../components/sidebar/sidebar';
 import { VideocardModelTableComponent } from '../../components/videocard-model/videocard-model-table';
 import { SidebarService } from '../../../services/sidebar.service';
-import { VideocardModelService } from '../../../services/videocard-model.service';
-import { VideoCardModel } from '../../../models/videocard-model';
+import { VideocardModelService, VideoCardItem } from '../../../services/videocard-model.service';
 
 @Component({
   selector: 'app-videocard-model',
@@ -17,25 +16,34 @@ import { VideoCardModel } from '../../../models/videocard-model';
   styleUrls: ['./videocard-model.css']
 })
 export class VideocardModelPageComponent implements OnInit {
-  videocardModels: VideoCardModel[] = [];
-  filteredVideocardModels: VideoCardModel[] = [];
+  videocardModels: VideoCardItem[] = [];
+  filteredVideocardModels: VideoCardItem[] = [];
   searchTerm: string = '';
   isSidebarOpen = true;
   isLoading = false;
   errorMessage = '';
 
-  currentVideocard: VideoCardModel = {
-    id: '',
+  // initialize with the service's shape (id is number)
+  currentVideocard: VideoCardItem = {
+    id: 0,
     referenceId: '',
     modelName: '',
-    memorySizeGb: 0,
-    manufacturer: ''
+    manufacturer: undefined,
+    memoryGb: undefined,
+    memoryType: undefined,
+    memoryBus: undefined,
+    coreClock: undefined,
+    boostClock: undefined,
+    tdp: undefined,
+    pciExpress: undefined,
+    outputs: undefined,
+    lengthMm: undefined
   };
 
   isEditMode: boolean = false;
   showForm: boolean = false;
   showDeleteModal: boolean = false;
-  videocardToDelete: VideoCardModel | null = null;
+  videocardToDelete: VideoCardItem | null = null;
 
   private sidebarService = inject(SidebarService);
   private videocardService = inject(VideocardModelService);
@@ -56,11 +64,8 @@ export class VideocardModelPageComponent implements OnInit {
 
     this.videocardService.getAllVideocards().subscribe({
       next: (data) => {
-        // normalize ids to string if backend returns numbers
-        this.videocardModels = data.map(item => ({
-          ...item,
-          id: (item.id as any)?.toString?.() ?? String(item.id ?? ''),
-        }));
+        // data already matches VideoCardItem[] (ids are numbers)
+        this.videocardModels = data;
         this.filteredVideocardModels = [...this.videocardModels];
         this.isLoading = false;
       },
@@ -94,9 +99,10 @@ export class VideocardModelPageComponent implements OnInit {
     this.resetForm();
   }
 
-  openEditForm(videocard: VideoCardModel) {
+  openEditForm(videocard: VideoCardItem) {
     this.isEditMode = true;
     this.showForm = true;
+    // shallow copy to avoid mutating the array until saved
     this.currentVideocard = { ...videocard };
   }
 
@@ -107,11 +113,19 @@ export class VideocardModelPageComponent implements OnInit {
 
   resetForm() {
     this.currentVideocard = {
-      id: '',
+      id: 0,
       referenceId: '',
       modelName: '',
-      memorySizeGb: 0,
-      manufacturer: ''
+      manufacturer: undefined,
+      memoryGb: undefined,
+      memoryType: undefined,
+      memoryBus: undefined,
+      coreClock: undefined,
+      boostClock: undefined,
+      tdp: undefined,
+      pciExpress: undefined,
+      outputs: undefined,
+      lengthMm: undefined
     };
     this.errorMessage = '';
   }
@@ -139,20 +153,19 @@ export class VideocardModelPageComponent implements OnInit {
     this.errorMessage = '';
 
     if (this.isEditMode) {
-      const updatePayload: Partial<VideoCardModel> = {
+      const updatePayload: Partial<VideoCardItem> = {
         id: this.currentVideocard.id,
         referenceId: this.currentVideocard.referenceId || `VID-${this.currentVideocard.id}`,
         modelName: trimmedName,
-        memorySizeGb: this.currentVideocard.memorySizeGb,
+        memoryGb: this.currentVideocard.memoryGb,
         manufacturer: this.currentVideocard.manufacturer
       };
 
-      // service expects numeric id in some backends; try to send as-is
-      this.videocardService.updateVideocard(this.currentVideocard.id as any, updatePayload as any).subscribe({
+      this.videocardService.updateVideocard(this.currentVideocard.id, updatePayload as any).subscribe({
         next: (updated) => {
           const idx = this.videocardModels.findIndex(v => v.id === this.currentVideocard.id);
           if (idx !== -1) {
-            this.videocardModels[idx] = { ...updated, id: (updated as any).id?.toString?.() ?? this.videocardModels[idx].id };
+            this.videocardModels[idx] = { ...this.videocardModels[idx], ...updated };
           }
           this.onSearch();
           this.closeForm();
@@ -163,7 +176,7 @@ export class VideocardModelPageComponent implements OnInit {
           // fallback: refresh list
           this.videocardService.getAllVideocards().subscribe({
             next: (items) => {
-              this.videocardModels = items.map(item => ({ ...item, id: (item as any).id?.toString?.() ?? String((item as any).id ?? '') }));
+              this.videocardModels = items;
               this.onSearch();
               this.closeForm();
               this.isLoading = false;
@@ -174,18 +187,17 @@ export class VideocardModelPageComponent implements OnInit {
       });
 
     } else {
-      const newVideocard: Partial<VideoCardModel> = {
+      const newVideocard: Partial<VideoCardItem> = {
+        // backend likely assigns numeric id; referenceId is helpful client-side
         referenceId: `VID-${Date.now()}`,
         modelName: trimmedName,
-        memorySizeGb: this.currentVideocard.memorySizeGb,
+        memoryGb: this.currentVideocard.memoryGb,
         manufacturer: this.currentVideocard.manufacturer
       };
 
       this.videocardService.createVideocard(newVideocard as any).subscribe({
         next: (created) => {
-          // normalize id
-          const createdItem = { ...created, id: (created as any).id?.toString?.() ?? String((created as any).id ?? '') };
-          this.videocardModels.push(createdItem);
+          this.videocardModels.push(created);
           this.onSearch();
           this.closeForm();
           this.isLoading = false;
@@ -195,7 +207,7 @@ export class VideocardModelPageComponent implements OnInit {
           // fallback: refresh list
           this.videocardService.getAllVideocards().subscribe({
             next: (items) => {
-              this.videocardModels = items.map(item => ({ ...item, id: (item as any).id?.toString?.() ?? String((item as any).id ?? '') }));
+              this.videocardModels = items;
               this.onSearch();
               this.closeForm();
               this.isLoading = false;
@@ -207,7 +219,7 @@ export class VideocardModelPageComponent implements OnInit {
     }
   }
 
-  deleteVideocardModel(videocard: VideoCardModel) {
+  deleteVideocardModel(videocard: VideoCardItem) {
     this.videocardToDelete = videocard;
     this.showDeleteModal = true;
   }
@@ -218,14 +230,13 @@ export class VideocardModelPageComponent implements OnInit {
     this.isLoading = true;
     this.errorMessage = '';
 
-    this.videocardService.deleteVideocard(this.videocardToDelete.id as any).subscribe({
+    this.videocardService.deleteVideocard(this.videocardToDelete.id).subscribe({
       next: () => {
         this.loadVideocardModels();
         this.closeDeleteModal();
       },
       error: (error) => {
         console.error('Error deleting video card model:', error);
-        // still attempt to refresh
         this.isLoading = false;
         this.loadVideocardModels();
         this.closeDeleteModal();
