@@ -22,4 +22,9 @@ export class InventoryTableComponent {
   onDelete(item: InventoryItem) {
     this.delete.emit(item);
   }
+
+  // small trackBy to improve ngFor performance on mobile card list
+  trackByTag(_index: number, item: InventoryItem) {
+    return item.tagNumber ?? _index;
+  }
 }

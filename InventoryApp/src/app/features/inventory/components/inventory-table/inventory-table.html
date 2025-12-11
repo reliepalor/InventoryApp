@@ -1,5 +1,8 @@
+<!-- show table on md and larger -->
 <div *ngIf="!isLoading || items.length > 0" class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200">
-  <div class="overflow-x-auto">
+
+  <!-- TABLE: visible on md+ -->
+  <div class="overflow-x-auto hidden md:block">
     <table class="min-w-full divide-y divide-gray-200">
       <thead>
         <tr class="bg-gradient-to-r from-indigo-50 to-blue-50">
@@ -71,7 +74,7 @@
       <tbody class="bg-white divide-y divide-gray-100">
         <tr *ngFor="let it of items; let i = index" class="hover:bg-gradient-to-r hover:from-indigo-50/50 hover:to-blue-50/50 transition-all duration-200 group">
           <td class="px-6 py-4 whitespace-nowrap">
-            <div class="text-sm font-semibold text-gray-900">{{ it.tagNumber ?? '-' }}</div>
+            <div class="text-sm font-semibold text-gray-900">{{ it.tagNumber }}</div>
           </td>
 
           <td class="px-6 py-4 whitespace-nowrap">
@@ -134,5 +137,74 @@
         </tr>
       </tbody>
     </table>
+  </div>
+
+  <!-- CARD LIST: visible on small screens (below md) -->
+  <div class="block md:hidden px-4 py-4 space-y-3">
+    <ng-container *ngIf="items.length > 0; else mobileEmpty">
+      <div *ngFor="let it of items; trackBy: trackByTag" class="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm">
+        <div class="flex items-start justify-between gap-4">
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between gap-2">
+              <h4 class="text-sm font-semibold text-gray-900 truncate">{{ it.tagNumber }}</h4>
+              <span class="text-xs text-gray-500">{{ it.datePurchased ? (it.datePurchased | date:'shortDate') : '-' }}</span>
+            </div>
+
+            <div class="mt-2 grid grid-cols-2 gap-2 text-sm text-gray-700">
+              <div>
+                <div class="text-xs text-gray-500">Department</div>
+                <div class="font-medium">{{ it.department ?? '-' }}</div>
+              </div>
+
+              <div>
+                <div class="text-xs text-gray-500">Assigned To</div>
+                <div class="font-medium">{{ it.assignedTo ?? '-' }}</div>
+              </div>
+
+              <div>
+                <div class="text-xs text-gray-500">Type</div>
+                <div class="font-medium">{{ it.type ?? '-' }}</div>
+              </div>
+
+              <div>
+                <div class="text-xs text-gray-500">Brand</div>
+                <div class="font-medium">{{ it.brand ?? '-' }}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions (stacked vertically on very small screens) -->
+          <div class="flex flex-col items-end gap-2">
+            <button
+              (click)="onEdit(it)"
+              [disabled]="isLoading"
+              class="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-all duration-200 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed border border-blue-200 hover:border-blue-300 font-medium">
+              Edit
+            </button>
+
+            <button
+              (click)="onDelete(it)"
+              [disabled]="isLoading"
+              class="inline-flex items-center gap-1 px-3 py-1.5 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-all duration-200 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed border border-red-200 hover:border-red-300 font-medium">
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-template #mobileEmpty>
+      <div class="py-16">
+        <div class="text-center">
+          <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
+            <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">No inventory items found</h3>
+          <p class="text-gray-500 mb-4">Try adjusting your search or add a new inventory item to get started.</p>
+        </div>
+      </div>
+    </ng-template>
   </div>
 </div>

@@ -9,4 +9,8 @@ export class SidebarService {
   toggleSidebar(): void {
     this.sidebarOpenSubject.next(!this.sidebarOpenSubject.getValue());
   }
+
+  setSidebar(isOpen: boolean): void {
+    this.sidebarOpenSubject.next(isOpen);
+  }
 }
