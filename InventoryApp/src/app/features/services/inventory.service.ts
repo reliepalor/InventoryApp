@@ -24,14 +24,14 @@ export class InventoryService {
     );
   }
 
-  createInventory(item: CreateInventoryRequest): Observable<InventoryItem> {
-    return this.http.post<InventoryItem>(this.apiUrl + 'createInventory/', item, { observe: 'body' }).pipe(
+  createInventory(payload: CreateInventoryRequest): Observable<InventoryItem> {
+    return this.http.post<InventoryItem>(this.apiUrl + 'createInventory/', payload, { observe: 'body' }).pipe(
       catchError(this.handleError)
     );
   }
 
-  updateInventory(id: number, item: UpdateInventoryRequest): Observable<InventoryItem> {
-    return this.http.put<InventoryItem>(`${this.apiUrl + 'updateInventory'}/${id}`, item, { observe: 'body' }).pipe(
+  updateInventory(id: number, payload: UpdateInventoryRequest): Observable<InventoryItem> {
+    return this.http.put<InventoryItem>(`${this.apiUrl + 'updateInventory'}/${id}`, payload, { observe: 'body' }).pipe(
       catchError(this.handleError)
     );
   }
@@ -60,92 +60,47 @@ export class InventoryService {
 }
 
 /**
- * Inventory item types used by the inventory feature
- *
- * Fields chosen to match your inventory table columns:
- * - brand, model, motherboard
- * - officeInstalled (boolean) => Office Installed
- * - osInstalled => OS Installed
- * - processor => Processor (string)
- * - ramModel, ramSize
- * - storageModel, storageSize
- * - videoMemory, videoModel
- *
- * id and optional referenceId included for record identity (adjust as needed).
+ * Inventory types used by the inventory feature
  */
-
 export interface InventoryItem {
   id: number;
-  // optional identifier if you use an asset tag/reference id
-  referenceId?: string | null;
-
-  brand?: string | null;
-  model?: string | null;
-  motherboard?: string | null;
-
-  // true = installed, false = not installed, null = unknown / not set
-  officeInstalled?: boolean | null;
-
-  osInstalled?: string | null;
-  processor?: string | null;
-
-  ramModel?: string | null;
-  // use string so you can store "8 GB", "16GB (2x8)" etc.
-  ramSize?: string | null;
-
-  storageModel?: string | null;
-  storageSize?: string | null;
-
-  // GPU/video card info
-  videoMemory?: string | null; // e.g. "4 GB", "512 MB"
-  videoModel?: string | null;
-
-  // optional metadata
-  created_at?: string | null;
-  updated_at?: string | null;
+  tagNumber: string;
+  datePurchased: string | Date;
+  department?: string;
+  assignedTo?: string;
+  type?: string;
+  brand?: string;
+  model?: string;
+  motherboard?: string;
+  officeInstalled?: boolean;
+  osInstalled?: string;
+  processor?: string;
+  ramModel?: string;
+  ramSize?: string;
+  storageModel?: string;
+  storageSize?: string;
+  videoMemory?: string;
+  videoModel?: string;
+  // additional optional fields you might need can be added here (e.g., location, status)
 }
 
 export interface CreateInventoryRequest {
-  referenceId?: string | null;
-
-  brand?: string | null;
-  model?: string | null;
-  motherboard?: string | null;
-
-  officeInstalled?: boolean | null;
-
-  osInstalled?: string | null;
-  processor?: string | null;
-
-  ramModel?: string | null;
-  ramSize?: string | null;
-
-  storageModel?: string | null;
-  storageSize?: string | null;
-
-  videoMemory?: string | null;
-  videoModel?: string | null;
+  tagNumber: string;
+  datePurchased: string | Date;
+  department?: string;
+  assignedTo?: string;
+  type?: string;
+  brand?: string;
+  // add other fields required by your API
 }
 
 export interface UpdateInventoryRequest {
   id: number;
-  referenceId?: string | null;
-
-  brand?: string | null;
-  model?: string | null;
-  motherboard?: string | null;
-
-  officeInstalled?: boolean | null;
-
-  osInstalled?: string | null;
-  processor?: string | null;
-
-  ramModel?: string | null;
-  ramSize?: string | null;
-
-  storageModel?: string | null;
-  storageSize?: string | null;
-
-  videoMemory?: string | null;
-  videoModel?: string | null;
+  tagNumber: string;
+  datePurchased: string | Date;
+  department?: string;
+  assignedTo?: string;
+  type?: string;
+  brand?: string;
+  // add other fields required by your API
 }

@@ -10,7 +10,7 @@ import { MotherboardService, MotherboardItem } from '../../../services/motherboa
 // Local types for motherboard feature
 import { MotherboardCreateRequest, MotherboardUpdateRequest } from '../../../models/maintenance';
 
-// Use shared maintenance interfaces as the local motherboard item type
+// Re-export type so other files can import if they previously relied on this file exporting it
 export type { MotherboardItem };
 
 @Component({
@@ -21,10 +21,11 @@ export type { MotherboardItem };
   styleUrls: ['./motherboard.css']
 })
 export class MotherboardPageComponent implements OnInit {
-  // full motherboard objects
+  // Full motherboard objects
   motherboards: MotherboardItem[] = [];
   filteredMotherboards: MotherboardItem[] = [];
 
+  // Search and layout
   searchTerm: string = '';
   isSidebarOpen = true;
   isLoading = false;
@@ -40,11 +41,30 @@ export class MotherboardPageComponent implements OnInit {
     mbDescription: ''
   };
 
+  // Edit / modal controls
   isEditMode: boolean = false;
   showForm: boolean = false;
   showDeleteModal: boolean = false;
   motherboardToDelete: MotherboardItem | null = null;
 
+  // Dropdown lists (initial common values, will merge with loaded values)
+  sockets: string[] = [
+    'LGA1700','LGA1200','LGA1151','AM4','AM5','TRX4','sTRX4','BGA'
+  ];
+  chipsets: string[] = [
+    'Z790','Z690','Z590','B660','B550','X570','X470','H670','H610','B450'
+  ];
+
+  // Dropdown bindings / custom fields
+  selectedSocket: string = '';
+  customSocket: string = '';
+  isCustomSocket: boolean = false;
+
+  selectedChipset: string = '';
+  customChipset: string = '';
+  isCustomChipset: boolean = false;
+
+  // services
   private sidebarService = inject(SidebarService);
   private motherboardService = inject(MotherboardService);
 
@@ -58,6 +78,7 @@ export class MotherboardPageComponent implements OnInit {
     this.loadMotherboards();
   }
 
+  // Load all motherboards from API and extract unique socket/chipset values
   loadMotherboards() {
     this.isLoading = true;
     this.errorMessage = '';
@@ -65,9 +86,12 @@ export class MotherboardPageComponent implements OnInit {
     this.motherboardService.getAllMotherboards().subscribe({
       next: (data) => {
         console.log('Motherboards loaded:', data);
-        this.motherboards = data;
+        this.motherboards = data || [];
         this.filteredMotherboards = [...this.motherboards];
         this.isLoading = false;
+
+        // Merge unique sockets / chipsets from loaded data into dropdown lists
+        this.mergeUniqueDropdownValues();
       },
       error: (error) => {
         console.error('Error loading motherboards:', error);
@@ -79,6 +103,26 @@ export class MotherboardPageComponent implements OnInit {
     });
   }
 
+  // Add unique socket/chipset values from loaded motherboards to the arrays
+  private mergeUniqueDropdownValues() {
+    const socketSet = new Set(this.sockets.map(s => s.trim()).filter(s => !!s));
+    const chipsetSet = new Set(this.chipsets.map(c => c.trim()).filter(c => !!c));
+
+    for (const mb of this.motherboards) {
+      if (mb.mbSocket && mb.mbSocket.trim()) {
+        socketSet.add(mb.mbSocket.trim());
+      }
+      if (mb.mbChipset && mb.mbChipset.trim()) {
+        chipsetSet.add(mb.mbChipset.trim());
+      }
+    }
+
+    // Convert back to arrays and sort (optional)
+    this.sockets = Array.from(socketSet).sort((a, b) => a.localeCompare(b));
+    this.chipsets = Array.from(chipsetSet).sort((a, b) => a.localeCompare(b));
+  }
+
+  // Search handling
   onSearch() {
     if (!this.searchTerm) {
       this.filteredMotherboards = [...this.motherboards];
@@ -86,9 +130,10 @@ export class MotherboardPageComponent implements OnInit {
     }
 
     const term = this.searchTerm.toLowerCase();
-    this.filteredMotherboards = this.motherboards.filter(m => m.mbName.toLowerCase().includes(term));
+    this.filteredMotherboards = this.motherboards.filter(m => (m.mbName || '').toLowerCase().includes(term));
   }
 
+  // Form openers
   openAddForm() {
     this.isEditMode = false;
     this.showForm = true;
@@ -98,7 +143,42 @@ export class MotherboardPageComponent implements OnInit {
   openEditForm(motherboard: MotherboardItem) {
     this.isEditMode = true;
     this.showForm = true;
+
+    // copy to avoid two-way binding issues
     this.currentMotherboard = { ...motherboard };
+
+    // pre-select dropdown values if they match
+    if (this.currentMotherboard.mbSocket) {
+      if (this.sockets.includes(this.currentMotherboard.mbSocket)) {
+        this.selectedSocket = this.currentMotherboard.mbSocket;
+        this.isCustomSocket = false;
+        this.customSocket = '';
+      } else {
+        this.selectedSocket = '__custom__';
+        this.isCustomSocket = true;
+        this.customSocket = this.currentMotherboard.mbSocket;
+      }
+    } else {
+      this.selectedSocket = '';
+      this.isCustomSocket = false;
+      this.customSocket = '';
+    }
+
+    if (this.currentMotherboard.mbChipset) {
+      if (this.chipsets.includes(this.currentMotherboard.mbChipset)) {
+        this.selectedChipset = this.currentMotherboard.mbChipset;
+        this.isCustomChipset = false;
+        this.customChipset = '';
+      } else {
+        this.selectedChipset = '__custom__';
+        this.isCustomChipset = true;
+        this.customChipset = this.currentMotherboard.mbChipset;
+      }
+    } else {
+      this.selectedChipset = '';
+      this.isCustomChipset = false;
+      this.customChipset = '';
+    }
   }
 
   closeForm() {
@@ -106,6 +186,7 @@ export class MotherboardPageComponent implements OnInit {
     this.resetForm();
   }
 
+  // Keep form state consistent
   resetForm() {
     this.currentMotherboard = {
       id: 0,
@@ -116,9 +197,60 @@ export class MotherboardPageComponent implements OnInit {
       mbDescription: ''
     };
     this.errorMessage = '';
+
+    this.selectedSocket = '';
+    this.customSocket = '';
+    this.isCustomSocket = false;
+
+    this.selectedChipset = '';
+    this.customChipset = '';
+    this.isCustomChipset = false;
   }
 
+  // Dropdown change handlers
+  onSocketChange() {
+    this.isCustomSocket = this.selectedSocket === '__custom__';
+    if (!this.isCustomSocket) {
+      this.currentMotherboard.mbSocket = this.selectedSocket || '';
+      this.customSocket = '';
+    } else {
+      this.currentMotherboard.mbSocket = '';
+    }
+  }
+
+  onChipsetChange() {
+    this.isCustomChipset = this.selectedChipset === '__custom__';
+    if (!this.isCustomChipset) {
+      this.currentMotherboard.mbChipset = this.selectedChipset || '';
+      this.customChipset = '';
+    } else {
+      this.currentMotherboard.mbChipset = '';
+    }
+  }
+
+  clearSocket() {
+    this.selectedSocket = '';
+    this.customSocket = '';
+    this.currentMotherboard.mbSocket = '';
+    this.isCustomSocket = false;
+  }
+
+  clearChipset() {
+    this.selectedChipset = '';
+    this.customChipset = '';
+    this.currentMotherboard.mbChipset = '';
+    this.isCustomChipset = false;
+  }
+
+  // Submit (create/update)
   onSubmit() {
+    // Resolve chosen socket/chipset to the model (run before validations)
+    const finalSocket = this.isCustomSocket ? (this.customSocket || '').trim() : (this.selectedSocket || this.currentMotherboard.mbSocket || '').trim();
+    const finalChipset = this.isCustomChipset ? (this.customChipset || '').trim() : (this.selectedChipset || this.currentMotherboard.mbChipset || '').trim();
+
+    this.currentMotherboard.mbSocket = finalSocket;
+    this.currentMotherboard.mbChipset = finalChipset;
+
     // Validate motherboard name
     if (!this.currentMotherboard.mbName || !this.currentMotherboard.mbName.trim()) {
       this.errorMessage = 'Motherboard name is required.';
@@ -205,12 +337,12 @@ export class MotherboardPageComponent implements OnInit {
                 this.closeForm();
                 this.errorMessage = '';
               } else {
-                this.errorMessage = error.message || 'Failed to update motherboard. Please try again.';
+                this.errorMessage = error?.message || 'Failed to update motherboard. Please try again.';
               }
               this.isLoading = false;
             },
             error: () => {
-              this.errorMessage = error.message || 'Failed to update motherboard. Please try again.';
+              this.errorMessage = error?.message || 'Failed to update motherboard. Please try again.';
               this.isLoading = false;
             }
           });
@@ -246,12 +378,12 @@ export class MotherboardPageComponent implements OnInit {
                 this.closeForm();
                 this.errorMessage = '';
               } else {
-                this.errorMessage = error.message || 'Failed to create motherboard. Please try again.';
+                this.errorMessage = error?.message || 'Failed to create motherboard. Please try again.';
               }
               this.isLoading = false;
             },
             error: () => {
-              this.errorMessage = error.message || 'Failed to create motherboard. Please try again.';
+              this.errorMessage = error?.message || 'Failed to create motherboard. Please try again.';
               this.isLoading = false;
             }
           });
@@ -260,6 +392,7 @@ export class MotherboardPageComponent implements OnInit {
     }
   }
 
+  // Delete workflow
   deleteMotherboard(motherboard: MotherboardItem) {
     this.motherboardToDelete = motherboard;
     this.showDeleteModal = true;
@@ -289,12 +422,12 @@ export class MotherboardPageComponent implements OnInit {
               this.onSearch();
               this.closeDeleteModal();
             } else {
-              this.errorMessage = error.message || 'Failed to delete motherboard. Please try again.';
+              this.errorMessage = error?.message || 'Failed to delete motherboard. Please try again.';
             }
             this.isLoading = false;
           },
           error: () => {
-            this.errorMessage = error.message || 'Failed to delete motherboard. Please try again.';
+            this.errorMessage = error?.message || 'Failed to delete motherboard. Please try again.';
             this.isLoading = false;
             this.closeDeleteModal();
           }

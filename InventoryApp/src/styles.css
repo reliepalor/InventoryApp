@@ -31,3 +31,6 @@
     @apply bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200;
   }
 }
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

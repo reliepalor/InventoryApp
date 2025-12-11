@@ -21,7 +21,7 @@ export const routes: Routes = [
     },
     {
         path: 'inventory',
-        loadComponent: () => import('./features/inventory/pages/inventory/inventory').then(m => m.Inventory),
+        loadComponent: () => import('./features/inventory/pages/inventory/inventory').then(m => m.InventoryPageComponent),
         canActivate: [authGuard]
     },
     { 

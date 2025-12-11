@@ -1,21 +1,42 @@
 export interface InventoryItem {
-  id: string;
-
+  id: number;
+  tagNumber: string;
+  datePurchased: string | Date;
+  department?: string;
+  assignedTo?: string;
+  type?: string;
   brand?: string;
-  model?: string;
-  motherboard?: string;
 
-  officeInstalled?: boolean;
-  osInstalled?: string;
+  modelId?: number;
+  statusId?: number;
+  locationId?: number;
+}
 
-  processor?: string;
 
-  ramModel?: string;
-  ramSize?: string;
+export interface CreateInventoryRequest {
+  tagNumber: string;
+  datePurchased: string | Date;
+  department?: string;
+  assignedTo?: string;
+  type?: string;
+  brand?: string;
 
-  storageModel?: string;
-  storageSize?: string;
+  modelId?: number;
+  statusId?: number;
+  locationId?: number;
+}
 
-  videoMemory?: string;
-  videoModel?: string;
+
+export interface UpdateInventoryRequest {
+  id: number;
+  tagNumber: string;
+  datePurchased: string | Date;
+  department?: string;
+  assignedTo?: string;
+  type?: string;
+  brand?: string;
+
+  modelId?: number;
+  statusId?: number;
+  locationId?: number;
 }
