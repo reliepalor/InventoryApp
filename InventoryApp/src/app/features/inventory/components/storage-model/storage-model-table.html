@@ -23,7 +23,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                   d="M3 7h18M3 12h18M3 17h18"/>
               </svg>
-              Storage Model
+              Storage Name
             </div>
           </th>
 
@@ -42,6 +42,16 @@
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M12 4a8 8 0 100 16 8 8 0 000-16z"/>
+              </svg>
+              Storage Interface
+            </div>
+          </th>
+
+          <th class="px-6 py-4 text-left text-xs font-bold text-indigo-700 uppercase tracking-wider">
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M6 3h12l1 4H5l1-4zM7 8h10v10H7z"/>
               </svg>
               Actions
             </div>
@@ -64,10 +74,10 @@
             </span>
           </td>
 
-          <!-- Storage Model -->
+          <!-- Storage Name -->
           <td class="px-6 py-4 whitespace-nowrap">
             <div class="text-sm font-semibold text-gray-900">
-              {{ item.storageModel }}
+              {{ item.storageName }}
             </div>
           </td>
 
@@ -77,6 +87,13 @@
                          bg-blue-100 text-blue-800 border border-blue-200">
               {{ item.storageType }}
             </span>
+          </td>
+
+          <!-- Storage Interface -->
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm text-gray-700">
+              {{ item.storageInterface }}
+            </div>
           </td>
 
           <!-- ACTIONS -->
@@ -122,7 +139,7 @@
 
         <!-- EMPTY STATE -->
         <tr *ngIf="storageModels.length === 0">
-          <td colspan="4" class="px-6 py-16">
+          <td colspan="5" class="px-6 py-16">
             <div class="text-center">
 
               <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">

@@ -1,8 +1,7 @@
-// videocard-model-table.ts
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { VideoCardModel } from '../../../models/videocard-model';
 import { VideoCardItem } from '../../../services/videocard-model.service';
+
 @Component({
   selector: 'app-videocard-model-table',
   standalone: true,
@@ -24,4 +23,3 @@ export class VideocardModelTableComponent {
     this.delete.emit(item);
   }
 }
-

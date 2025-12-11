@@ -9,36 +9,36 @@ import { RamSizeItem } from '../models/ram-size';
   providedIn: 'root',
 })
 export class RamSizeService {
-  private apiUrl = `${environment.apiUrl}/RamSize/`;
+  private apiUrl = `${environment.apiUrl}/Maintenance/`;
 
   constructor(private http: HttpClient) {}
 
   getAllRamSizes(): Observable<RamSizeItem[]> {
-    return this.http.get<RamSizeItem[]>(this.apiUrl + 'getAll/').pipe(
+    return this.http.get<RamSizeItem[]>(this.apiUrl + 'getAllRamSizes').pipe(
       catchError(this.handleError)
     );
   }
 
   getRamSizeById(id: number): Observable<RamSizeItem> {
-    return this.http.get<RamSizeItem>(`${this.apiUrl + 'getById'}/${id}`).pipe(
+    return this.http.get<RamSizeItem>(`${this.apiUrl + 'getRamSizeByIdyId'}/${id}`).pipe(
       catchError(this.handleError)
     );
   }
 
   createRamSize(ramSize: CreateRamSizeRequest): Observable<RamSizeItem> {
-    return this.http.post<RamSizeItem>(this.apiUrl + 'create/', ramSize, { observe: 'body' }).pipe(
+    return this.http.post<RamSizeItem>(this.apiUrl + 'createRamSize/', ramSize, { observe: 'body' }).pipe(
       catchError(this.handleError)
     );
   }
 
   updateRamSize(id: number, ramSize: UpdateRamSizeRequest): Observable<RamSizeItem> {
-    return this.http.put<RamSizeItem>(`${this.apiUrl + 'update'}/${id}`, ramSize, { observe: 'body' }).pipe(
+    return this.http.put<RamSizeItem>(`${this.apiUrl + 'updateRamSize'}/${id}`, ramSize, { observe: 'body' }).pipe(
       catchError(this.handleError)
     );
   }
 
   deleteRamSize(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl + 'delete'}/${id}`, { observe: 'response' }).pipe(
+    return this.http.delete(`${this.apiUrl + 'deleteRamSize'}/${id}`, { observe: 'response' }).pipe(
       catchError(this.handleError)
     );
   }
@@ -63,7 +63,7 @@ export class RamSizeService {
 /* DTOs — match your backend expectations */
 export interface CreateRamSizeRequest {
   referenceId?: string;
-  size: string;        // e.g. "8GB", "16GB"
+  Size: string;        // e.g. "8GB", "16GB"
 }
 
 export interface UpdateRamSizeRequest {

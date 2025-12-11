@@ -5,7 +5,7 @@ import { Navbar } from '../../components/navbar/navbar';
 import { Sidebar } from '../../components/sidebar/sidebar';
 import { StorageModelTableComponent } from '../../components/storage-model/storage-model-table';
 import { SidebarService } from '../../../services/sidebar.service';
-import { StorageModelService } from '../../../services/storage-model.service';
+import { StorageModelService, CreateStorageModelRequest, UpdateStorageModelRequest } from '../../../services/storage-model.service';
 import { StorageModelItem } from '../../../models/storage-model';
 
 @Component({
@@ -28,9 +28,41 @@ export class StorageModelPageComponent implements OnInit {
   currentStorageModel: StorageModelItem = {
     id: 0,
     referenceId: '',
-    storageModel: '',
-    storageType: ''
+    storageName: '',
+    storageType: '',
+    storageInterface: ''
   };
+
+  // dropdown options (sample defaults)
+  storageNameOptions: string[] = [
+    'Samsung 970 EVO Plus',
+    'WD Blue SN570',
+    'Seagate Barracuda',
+    'Kingston A400',
+    'Crucial MX500'
+  ];
+
+  storageTypeOptions: string[] = [
+    'SSD',
+    'HDD',
+    'NVMe',
+    'External',
+    'Hybrid'
+  ];
+
+  storageInterfaceOptions: string[] = [
+    'SATA',
+    'NVMe (PCIe)',
+    'M.2',
+    'USB 3.0',
+    'USB-C',
+    'SAS'
+  ];
+
+  // flags for showing custom inputs when "Other" is selected
+  customName = false;
+  customType = false;
+  customInterface = false;
 
   isEditMode: boolean = false;
   showForm: boolean = false;
@@ -70,6 +102,51 @@ export class StorageModelPageComponent implements OnInit {
     });
   }
 
+  // dropdown change handlers
+  onNameChange(value: string) {
+    this.customName = value === 'Other';
+    if (!this.customName) {
+      // ensure the model holds the selected option
+      this.currentStorageModel.storageName = value;
+    } else {
+      // clear so the custom input becomes required and the user types
+      this.currentStorageModel.storageName = '';
+    }
+  }
+
+  onTypeChange(value: string) {
+    this.customType = value === 'Other';
+    if (!this.customType) {
+      this.currentStorageModel.storageType = value;
+    } else {
+      this.currentStorageModel.storageType = '';
+    }
+  }
+
+  onInterfaceChange(value: string) {
+    this.customInterface = value === 'Other';
+    if (!this.customInterface) {
+      this.currentStorageModel.storageInterface = value;
+    } else {
+      this.currentStorageModel.storageInterface = '';
+    }
+  }
+
+  clearStorageName() {
+    this.currentStorageModel.storageName = '';
+    this.customName = false;
+  }
+
+  clearStorageType() {
+    this.currentStorageModel.storageType = '';
+    this.customType = false;
+  }
+
+  clearStorageInterface() {
+    this.currentStorageModel.storageInterface = '';
+    this.customInterface = false;
+  }
+
   onSearch() {
     if (!this.searchTerm) {
       this.filteredStorageModels = [...this.storageModels];
@@ -78,7 +155,7 @@ export class StorageModelPageComponent implements OnInit {
     const term = this.searchTerm.toLowerCase();
 
     this.filteredStorageModels = this.storageModels.filter(r =>
-      (r.storageModel || '').toLowerCase().includes(term) ||
+      (r.storageName || '').toLowerCase().includes(term) ||
       (r.storageType || '').toLowerCase().includes(term)
     );
   }
@@ -93,6 +170,11 @@ export class StorageModelPageComponent implements OnInit {
     this.isEditMode = true;
     this.showForm = true;
     this.currentStorageModel = { ...model };
+
+    // If the current value isn't in our sample list, enable custom for that field
+    this.customName = !!model.storageName && !this.storageNameOptions.includes(model.storageName);
+    this.customType = !!model.storageType && !this.storageTypeOptions.includes(model.storageType);
+    this.customInterface = !!model.storageInterface && !this.storageInterfaceOptions.includes(model.storageInterface);
   }
 
   closeForm() {
@@ -104,28 +186,30 @@ export class StorageModelPageComponent implements OnInit {
     this.currentStorageModel = {
       id: 0,
       referenceId: '',
-      storageModel: '',
-      storageType: ''
+      storageName: '',
+      storageType: '',
+      storageInterface: ''
     };
+    this.customName = this.customType = this.customInterface = false;
     this.errorMessage = '';
   }
 
   onSubmit() {
-    if (!this.currentStorageModel.storageModel || !this.currentStorageModel.storageType) {
+    if (!this.currentStorageModel.storageName || !this.currentStorageModel.storageType) {
       this.errorMessage = 'Please fill in all required fields.';
       return;
     }
 
-    const trimmedModel = this.currentStorageModel.storageModel.trim();
+    const trimmedName = this.currentStorageModel.storageName.trim();
 
     const isDuplicate = this.storageModels.some(m => {
-      const sameModel = (m.storageModel || '').toLowerCase() === trimmedModel.toLowerCase();
+      const sameName = (m.storageName || '').toLowerCase() === trimmedName.toLowerCase();
       const isDifferent = this.isEditMode ? m.id !== this.currentStorageModel.id : true;
-      return sameModel && isDifferent;
+      return sameName && isDifferent;
     });
 
     if (isDuplicate) {
-      this.errorMessage = `Storage model already exists. Please use a different name.`;
+      this.errorMessage = `Storage name already exists. Please use a different name.`;
       return;
     }
 
@@ -133,11 +217,11 @@ export class StorageModelPageComponent implements OnInit {
     this.errorMessage = '';
 
     if (this.isEditMode) {
-      const updatePayload: StorageModelItem = {
-        id: this.currentStorageModel.id,
+      const updatePayload: UpdateStorageModelRequest = {
         referenceId: this.currentStorageModel.referenceId || `STG-${this.currentStorageModel.id}`,
-        storageModel: trimmedModel,
-        storageType: this.currentStorageModel.storageType.trim()
+        storageName: trimmedName,
+        storageType: this.currentStorageModel.storageType.trim(),
+        storageInterface: this.currentStorageModel.storageInterface.trim()
       };
 
       this.storageModelService.updateStorageModel(this.currentStorageModel.id, updatePayload).subscribe({
@@ -166,13 +250,14 @@ export class StorageModelPageComponent implements OnInit {
       });
 
     } else {
-      const newStorage = {
+      const createPayload: CreateStorageModelRequest = {
         referenceId: `STG-${Date.now()}`,
-        storageModel: trimmedModel,
-        storageType: this.currentStorageModel.storageType.trim()
+        storageName: trimmedName,
+        storageType: this.currentStorageModel.storageType.trim(),
+        storageInterface: this.currentStorageModel.storageInterface.trim()
       };
 
-      this.storageModelService.createStorageModel(newStorage).subscribe({
+      this.storageModelService.createStorageModel(createPayload).subscribe({
         next: (created) => {
           this.storageModels.push(created);
           this.onSearch();
@@ -184,7 +269,7 @@ export class StorageModelPageComponent implements OnInit {
           // fallback: try to reload and detect created item
           this.storageModelService.getAllStorageModels().subscribe({
             next: (list) => {
-              const createdMatch = list.find(p => p.storageModel === newStorage.storageModel);
+              const createdMatch = list.find(p => p.storageName === createPayload.storageName);
               if (createdMatch) {
                 this.storageModels = list;
                 this.onSearch();

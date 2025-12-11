@@ -13,7 +13,6 @@ import { RamSizeItem } from '../../../models/ram-size';
   standalone: true,
   imports: [CommonModule, FormsModule, Navbar, Sidebar, RamSizeTableComponent],
   templateUrl: './ram-size.html'
- 
 })
 export class RamSizePageComponent implements OnInit {
   ramSizes: RamSizeItem[] = [];
@@ -54,7 +53,12 @@ export class RamSizePageComponent implements OnInit {
 
     this.ramSizeService.getAllRamSizes().subscribe({
       next: (data) => {
-        this.ramSizes = data;
+        // Normalize API data so that Size is always populated as a string
+        this.ramSizes = (data || []).map((item: any) => ({
+          ...item,
+          // Support different possible backend property names just in case
+          size: (item?.size ?? item?.size ?? item?.ramSize ?? item?.ram_size ?? '').toString()
+        }));
         this.filteredRamSizes = [...this.ramSizes];
         this.isLoading = false;
       },
@@ -107,12 +111,13 @@ export class RamSizePageComponent implements OnInit {
   }
 
   onSubmit() {
-    if (!this.currentRamSize.size || this.currentRamSize.size.trim() === '') {
-      this.errorMessage = 'Please fill in the RAM size.';
+    // Required field check (similar to RAM model form)
+    if (!this.currentRamSize.size) {
+      this.errorMessage = 'Please select a RAM size.';
       return;
     }
 
-    const trimmedSize = this.currentRamSize.size.trim();
+    const trimmedSize = this.currentRamSize.size.toString().trim();
 
     const isDuplicate = this.ramSizes.some(r => {
       const same = (r.size || '').toLowerCase() === trimmedSize.toLowerCase();
@@ -137,8 +142,9 @@ export class RamSizePageComponent implements OnInit {
 
       this.ramSizeService.updateRamSize(this.currentRamSize.id, updatePayload).subscribe({
         next: (updated) => {
+          // Update local array like RAM model page
           const index = this.ramSizes.findIndex(r => r.id === this.currentRamSize.id);
-          if (index !== -1) {
+          if (index !== -1 && updated) {
             this.ramSizes[index] = updated;
           }
           this.onSearch();
@@ -147,9 +153,13 @@ export class RamSizePageComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error updating RAM size:', error);
+          // Fallback: refresh list from server
           this.ramSizeService.getAllRamSizes().subscribe({
             next: (list) => {
-              this.ramSizes = list;
+              this.ramSizes = (list || []).map((item: any) => ({
+                ...item,
+                size: (item?.size ?? item?.size ?? item?.ramSize ?? item?.ram_size ?? '').toString()
+              }));
               this.onSearch();
               this.closeForm();
               this.isLoading = false;
@@ -158,15 +168,18 @@ export class RamSizePageComponent implements OnInit {
           });
         }
       });
+
     } else {
-      const newSize = {
+      const newRam: any = {
         referenceId: `RAMSIZE-${Date.now()}`,
         size: trimmedSize
       };
 
-      this.ramSizeService.createRamSize(newSize).subscribe({
+      this.ramSizeService.createRamSize(newRam).subscribe({
         next: (created) => {
-          this.ramSizes.push(created);
+          if (created) {
+            this.ramSizes.push(created);
+          }
           this.onSearch();
           this.closeForm();
           this.isLoading = false;
@@ -175,9 +188,12 @@ export class RamSizePageComponent implements OnInit {
           console.error('Error creating RAM size:', error);
           this.ramSizeService.getAllRamSizes().subscribe({
             next: (list) => {
-              const found = list.find(r => r.size === newSize.size);
-              if (found && !this.ramSizes.find(r => r.id === found.id)) {
-                this.ramSizes = list;
+              const createdMatch = (list || []).find(r => r.size?.toString() === newRam.size.toString());
+              if (createdMatch) {
+                this.ramSizes = (list || []).map((item: any) => ({
+                  ...item,
+                  size: (item?.size ?? item?.size ?? item?.ramSize ?? item?.ram_size ?? '').toString()
+                }));
                 this.onSearch();
                 this.closeForm();
               }

@@ -23,21 +23,15 @@ export class VideocardModelPageComponent implements OnInit {
   isLoading = false;
   errorMessage = '';
 
-  // initialize with the service's shape (id is number)
+  chipsetOptions = ['NVIDIA', 'AMD', 'Intel', 'Custom OEM'];
+
+  selectedChipset: string = '';
+
   currentVideocard: VideoCardItem = {
-    id: 0,
+    id: undefined,
     referenceId: '',
-    modelName: '',
-    manufacturer: undefined,
-    memoryGb: undefined,
-    memoryType: undefined,
-    memoryBus: undefined,
-    coreClock: undefined,
-    boostClock: undefined,
-    tdp: undefined,
-    pciExpress: undefined,
-    outputs: undefined,
-    lengthMm: undefined
+    videoCardName: '',
+    videoCardChipset: ''
   };
 
   isEditMode: boolean = false;
@@ -64,8 +58,8 @@ export class VideocardModelPageComponent implements OnInit {
 
     this.videocardService.getAllVideocards().subscribe({
       next: (data) => {
-        // data already matches VideoCardItem[] (ids are numbers)
-        this.videocardModels = data;
+        // Normalize data if backend uses different property names
+        this.videocardModels = data.map(item => this.mapToFrontend(item));
         this.filteredVideocardModels = [...this.videocardModels];
         this.isLoading = false;
       },
@@ -79,6 +73,15 @@ export class VideocardModelPageComponent implements OnInit {
     });
   }
 
+  private mapToFrontend(item: any): VideoCardItem {
+    return {
+      id: item.id ?? item._id ?? undefined,
+      referenceId: item.referenceId ?? item.referenceID ?? item._id ?? '',
+      videoCardName: item.videoCardName ?? item.modelName ?? item.name ?? '',
+      videoCardChipset: item.videoCardChipset ?? item.chipset ?? ''
+    };
+  }
+
   onSearch() {
     if (!this.searchTerm) {
       this.filteredVideocardModels = [...this.videocardModels];
@@ -87,8 +90,8 @@ export class VideocardModelPageComponent implements OnInit {
 
     const term = this.searchTerm.toLowerCase();
     this.filteredVideocardModels = this.videocardModels.filter(v =>
-      (v.modelName || '').toLowerCase().includes(term) ||
-      (v.manufacturer || '').toLowerCase().includes(term) ||
+      (v.videoCardName || '').toLowerCase().includes(term) ||
+      (v.videoCardChipset || '').toLowerCase().includes(term) ||
       (v.referenceId || '').toLowerCase().includes(term)
     );
   }
@@ -97,13 +100,16 @@ export class VideocardModelPageComponent implements OnInit {
     this.isEditMode = false;
     this.showForm = true;
     this.resetForm();
+    this.selectedChipset = '';
   }
 
   openEditForm(videocard: VideoCardItem) {
     this.isEditMode = true;
     this.showForm = true;
-    // shallow copy to avoid mutating the array until saved
     this.currentVideocard = { ...videocard };
+    // set select to existing value if it matches options, otherwise select 'Other'
+    this.selectedChipset = this.chipsetOptions.includes(this.currentVideocard.videoCardChipset || '') ?
+      (this.currentVideocard.videoCardChipset || '') : (this.currentVideocard.videoCardChipset ? 'Other' : '');
   }
 
   closeForm() {
@@ -113,33 +119,44 @@ export class VideocardModelPageComponent implements OnInit {
 
   resetForm() {
     this.currentVideocard = {
-      id: 0,
+      id: undefined,
       referenceId: '',
-      modelName: '',
-      manufacturer: undefined,
-      memoryGb: undefined,
-      memoryType: undefined,
-      memoryBus: undefined,
-      coreClock: undefined,
-      boostClock: undefined,
-      tdp: undefined,
-      pciExpress: undefined,
-      outputs: undefined,
-      lengthMm: undefined
+      videoCardName: '',
+      videoCardChipset: ''
     };
     this.errorMessage = '';
+    this.selectedChipset = '';
+  }
+
+  onChipsetChange(event: Event) {
+    const target = event.target as HTMLSelectElement;
+    const value = target?.value || '';
+    this.selectedChipset = value;
+    if (value && value !== 'Other') {
+      this.currentVideocard.videoCardChipset = value;
+    } else if (value === '') {
+      this.currentVideocard.videoCardChipset = '';
+    } else {
+      // Other selected — wait for custom input
+      this.currentVideocard.videoCardChipset = '';
+    }
   }
 
   onSubmit() {
-    if (!this.currentVideocard.modelName || this.currentVideocard.modelName.trim() === '') {
-      this.errorMessage = 'Please provide a model name.';
+    if (!this.currentVideocard.videoCardName || this.currentVideocard.videoCardName.trim() === '') {
+      this.errorMessage = 'Please provide a video card name.';
       return;
     }
 
-    const trimmedName = this.currentVideocard.modelName.trim();
+    if (!this.currentVideocard.videoCardChipset || this.currentVideocard.videoCardChipset.trim() === '') {
+      this.errorMessage = 'Please choose or enter a chipset.';
+      return;
+    }
+
+    const trimmedName = this.currentVideocard.videoCardName.trim();
 
     const isDuplicate = this.videocardModels.some(v => {
-      const sameName = (v.modelName || '').toLowerCase() === trimmedName.toLowerCase();
+      const sameName = (v.videoCardName || '').toLowerCase() === trimmedName.toLowerCase();
       const isDifferent = this.isEditMode ? v.id !== this.currentVideocard.id : true;
       return sameName && isDifferent;
     });
@@ -152,20 +169,33 @@ export class VideocardModelPageComponent implements OnInit {
     this.isLoading = true;
     this.errorMessage = '';
 
+    // Set referenceId for new items if missing
+    if (!this.currentVideocard.referenceId || this.currentVideocard.referenceId.trim() === '') {
+      this.currentVideocard.referenceId = `VID-${Date.now()}`;
+    }
+
     if (this.isEditMode) {
+      // Ensure id exists before calling update
+      const idToUse = this.currentVideocard.id;
+      if (idToUse === undefined || idToUse === null) {
+        this.errorMessage = 'Cannot update: missing video card id.';
+        this.isLoading = false;
+        return;
+      }
+
       const updatePayload: Partial<VideoCardItem> = {
-        id: this.currentVideocard.id,
-        referenceId: this.currentVideocard.referenceId || `VID-${this.currentVideocard.id}`,
-        modelName: trimmedName,
-        memoryGb: this.currentVideocard.memoryGb,
-        manufacturer: this.currentVideocard.manufacturer
+        referenceId: this.currentVideocard.referenceId,
+        videoCardName: trimmedName,
+        videoCardChipset: this.currentVideocard.videoCardChipset
       };
 
-      this.videocardService.updateVideocard(this.currentVideocard.id, updatePayload as any).subscribe({
+      // idToUse is now narrowed (not undefined/null)
+      this.videocardService.updateVideocard(idToUse as string | number, updatePayload as any).subscribe({
         next: (updated) => {
-          const idx = this.videocardModels.findIndex(v => v.id === this.currentVideocard.id);
+          const mapped = this.mapToFrontend(updated);
+          const idx = this.videocardModels.findIndex(v => v.id === idToUse);
           if (idx !== -1) {
-            this.videocardModels[idx] = { ...this.videocardModels[idx], ...updated };
+            this.videocardModels[idx] = { ...this.videocardModels[idx], ...mapped };
           }
           this.onSearch();
           this.closeForm();
@@ -176,7 +206,7 @@ export class VideocardModelPageComponent implements OnInit {
           // fallback: refresh list
           this.videocardService.getAllVideocards().subscribe({
             next: (items) => {
-              this.videocardModels = items;
+              this.videocardModels = items.map(i => this.mapToFrontend(i));
               this.onSearch();
               this.closeForm();
               this.isLoading = false;
@@ -188,16 +218,14 @@ export class VideocardModelPageComponent implements OnInit {
 
     } else {
       const newVideocard: Partial<VideoCardItem> = {
-        // backend likely assigns numeric id; referenceId is helpful client-side
-        referenceId: `VID-${Date.now()}`,
-        modelName: trimmedName,
-        memoryGb: this.currentVideocard.memoryGb,
-        manufacturer: this.currentVideocard.manufacturer
+        referenceId: this.currentVideocard.referenceId,
+        videoCardName: trimmedName,
+        videoCardChipset: this.currentVideocard.videoCardChipset
       };
 
       this.videocardService.createVideocard(newVideocard as any).subscribe({
         next: (created) => {
-          this.videocardModels.push(created);
+          this.videocardModels.push(this.mapToFrontend(created));
           this.onSearch();
           this.closeForm();
           this.isLoading = false;
@@ -207,7 +235,7 @@ export class VideocardModelPageComponent implements OnInit {
           // fallback: refresh list
           this.videocardService.getAllVideocards().subscribe({
             next: (items) => {
-              this.videocardModels = items;
+              this.videocardModels = items.map(i => this.mapToFrontend(i));
               this.onSearch();
               this.closeForm();
               this.isLoading = false;
@@ -230,7 +258,15 @@ export class VideocardModelPageComponent implements OnInit {
     this.isLoading = true;
     this.errorMessage = '';
 
-    this.videocardService.deleteVideocard(this.videocardToDelete.id).subscribe({
+    const idToDelete = this.videocardToDelete.id;
+    if (idToDelete === undefined || idToDelete === null) {
+      this.errorMessage = 'Cannot delete: missing video card id.';
+      this.isLoading = false;
+      this.closeDeleteModal();
+      return;
+    }
+
+    this.videocardService.deleteVideocard(idToDelete as string | number).subscribe({
       next: () => {
         this.loadVideocardModels();
         this.closeDeleteModal();

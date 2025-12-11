@@ -63,30 +63,49 @@ export class BrandService {
 export interface BrandItem {
   id: number;
   referenceId: string;
-  brandName: string;
-  country?: string;
-  foundedYear?: number;
-  description?: string;
-  website?: string;
-  created_at?: string;
-  updated_at?: string;
+  modelId?: number;
+  motherboardId?: number;
+  officeInstalledId?: number;
+  osInstalledId?: number;
+  processorId?: number;
+  ramModelId?: number;
+  ramSizeId?: number;
+  ramSizeIds?: number[];
+  storageModelId?: number;
+  storageSizeId?: number;
+  videocardMemoryId?: number;
+  videocardModelId?: number;
 }
 
 export interface CreateBrandRequest {
   referenceId: string;
-  brandName: string;
-  country?: string;
-  foundedYear?: number;
-  description?: string;
-  website?: string;
+  modelId?: number;
+  motherboardId?: number;
+  officeInstalledId?: number;
+  osInstalledId?: number;
+  processorId?: number;
+  ramModelId?: number;
+  ramSizeId?: number;
+  ramSizeIds?: number[];
+  storageModelId?: number;
+  storageSizeId?: number;
+  videocardMemoryId?: number;
+  videocardModelId?: number;
 }
 
 export interface UpdateBrandRequest {
   id: number;
   referenceId: string;
-  brandName: string;
-  country?: string;
-  foundedYear?: number;
-  description?: string;
-  website?: string;
+  modelId?: number;
+  motherboardId?: number;
+  officeInstalledId?: number;
+  osInstalledId?: number;
+  processorId?: number;
+  ramModelId?: number;
+  ramSizeId?: number;
+  ramSizeIds?: number[];
+  storageModelId?: number;
+  storageSizeId?: number;
+  videocardMemoryId?: number;
+  videocardModelId?: number;
 }

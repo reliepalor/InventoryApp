@@ -1,9 +1,15 @@
 import { Component, inject, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
-import { environment } from '../../../environments/environment';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-login-page',
@@ -12,36 +18,44 @@ import { environment } from '../../../environments/environment';
   templateUrl: './login.component.html'
 })
 export class LoginPageComponent {
-  loginForm: FormGroup;
-  errorMessage: string = '';
-  isLoading: boolean = false;
-  showPassword: boolean = false;
-  returnUrl: string = '/dashboard';
+  // use typed form group for stronger type checking
+  loginForm = new FormGroup({
+    username: new FormControl<string>('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(3)]
+    }),
+    password: new FormControl<string>('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(6)]
+    }),
+    remember: new FormControl<boolean>(false, { nonNullable: true })
+  });
 
-  // expose environment to template to conditionally show demo buttons
-  env: any = environment;
+  errorMessage = '';
+  isLoading = false;
+  showPassword = false;
+  returnUrl = '/dashboard';
 
+  // prefer consistent injection style
   private authService = inject(AuthService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
-  private zone = inject(NgZone);
+  private fb = inject(FormBuilder);
+  constructor() {
+    // read returnUrl from query params (if present)
+    const qsReturn = this.route.snapshot.queryParams['returnUrl'];
+    if (typeof qsReturn === 'string' && qsReturn.length) {
+      this.returnUrl = qsReturn;
+    }
 
-  constructor(
-    private fb: FormBuilder,
-  ) {
-    this.loginForm = this.fb.group({
-      username: ['', [Validators.required, Validators.minLength(3)]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      remember: [false]
-    });
-
-    // Get return url from route parameters or default to '/dashboard'
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
-
-    // Redirect to dashboard if already logged in
-    if (this.authService.isLoggedIn()) {
-      // wrap in zone to be safe
-      this.zone.run(() => this.router.navigate([this.returnUrl]));
+    // redirect if already logged in
+    try {
+      if (this.authService?.isLoggedIn && this.authService.isLoggedIn()) {
+        this.router.navigateByUrl(this.returnUrl);
+      }
+    } catch (e) {
+      // if authService.isLoggedIn isn't present or throws, silently ignore
+      console.warn('AuthService isLoggedIn check failed', e);
     }
   }
 
@@ -50,10 +64,8 @@ export class LoginPageComponent {
   }
 
   onSubmit(): void {
-    // Mark all fields as touched to show validation errors
-    Object.keys(this.loginForm.controls).forEach(key => {
-      this.loginForm.get(key)?.markAsTouched();
-    });
+    // mark controls as touched so validation messages appear
+    Object.values(this.loginForm.controls).forEach(control => control.markAsTouched());
 
     if (this.loginForm.invalid) {
       this.errorMessage = 'Please fill in all required fields correctly.';
@@ -63,46 +75,35 @@ export class LoginPageComponent {
     this.isLoading = true;
     this.errorMessage = '';
 
-    const { username, password } = this.loginForm.value;
+    const username = this.loginForm.controls.username.value;
+    const password = this.loginForm.controls.password.value;
+    const payload = { username, password };
 
-    this.authService.login({ username, password }).subscribe({
+    // assume AuthService.login returns Observable<any>
+    let obs: Observable<any>;
+    try {
+      obs = this.authService.login(payload);
+    } catch (err) {
+      // synchronous error from calling login()
+      this.isLoading = false;
+      this.errorMessage = 'Login failed to start: ' + (err as Error).message;
+      return;
+    }
+
+    obs.subscribe({
       next: (response: any) => {
         console.log('Login successful', response);
-
-        // Defensive: ensure token is saved (AuthService may already set it)
-        if (response?.token) {
-          try {
-            this.authService.setToken(response.token);
-            // also store user minimally if present
-            if (response?.username || response?.user) {
-              localStorage.setItem('auth_user', JSON.stringify({ username: response.username || response.user }));
-            }
-            console.log('Token stored to localStorage:', localStorage.getItem('auth_token'));
-          } catch (err) {
-            console.warn('Error storing token:', err);
-          }
-        } else {
-          console.warn('Response contained no token:', response);
-        }
-
-        // Navigate inside Angular zone and log result
-        this.zone.run(() => {
-          this.router.navigate([this.returnUrl], { replaceUrl: true }).then((navOk) => {
-            console.log('Router.navigate resolved:', navOk, '-> current url:', window.location.href);
-            if (!navOk) {
-              console.warn('Navigation returned false — likely blocked by a guard or incorrect route.');
-            }
-          }).catch(navErr => {
-            console.error('Router.navigate error:', navErr);
-          });
-        });
+        // if your login returns a JWT, you might want to store it here (AuthService may already do it)
+        this.router.navigateByUrl(this.returnUrl);
       },
       error: (error: any) => {
         console.error('Login failed', error);
-        if (typeof error?.error === 'string') {
+        if (error && typeof error.error === 'string') {
           this.errorMessage = error.error;
+        } else if (error && typeof error.message === 'string') {
+          this.errorMessage = error.message;
         } else {
-          this.errorMessage = error?.message || 'Invalid username or password';
+          this.errorMessage = 'Invalid username or password';
         }
         this.isLoading = false;
       },
@@ -112,8 +113,8 @@ export class LoginPageComponent {
     });
   }
 
-  // Helper method to check if field has error
-  hasError(fieldName: string, errorType?: string): boolean {
+  // helper method to check if field has a specific error or any error
+  hasError(fieldName: 'username' | 'password' | 'remember', errorType?: string): boolean {
     const field = this.loginForm.get(fieldName);
     if (!field) return false;
 

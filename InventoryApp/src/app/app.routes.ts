@@ -4,6 +4,7 @@ import { authGuard } from './features/services/auth.guard';
 import { StorageModelPageComponent } from './features/inventory/pages/storage-model/storage-model';
 import { VideocardMemoryPageComponent } from './features/inventory/pages/videocard-memory/videocard-memory';
 import { VideocardModelPageComponent } from './features/inventory/pages/videocard-model/videocard-model';
+import { StorageSizePageComponent } from './features/inventory/pages/storage-size/storage-size';
 
 export const routes: Routes = [
     {
@@ -20,17 +21,17 @@ export const routes: Routes = [
     },
     {
         path: 'inventory',
-        loadComponent: () => import('./features/inventory/pages/inventory/inventory').then(m => m.InventoryPageComponent),
-        canActivate: [authGuard]
-    },
-    {
-        path: 'brand',
-        loadComponent: () => import('./features/inventory/pages/brand/brand').then(m => m.BrandPageComponent),
+        loadComponent: () => import('./features/inventory/pages/inventory/inventory').then(m => m.Inventory),
         canActivate: [authGuard]
     },
     { 
         path: 'model', 
         loadComponent: () => import('./features/inventory/pages/model/model').then(m => m.ModelPageComponent),
+        canActivate: [authGuard]
+    },
+    {
+        path: 'brand',
+        loadComponent: () => import('./features/inventory/pages/brand/brand').then(m => m.BrandPageComponent),
         canActivate: [authGuard]
     },
     {
@@ -70,7 +71,7 @@ export const routes: Routes = [
     },
     {
         path: 'storage-size',
-        loadComponent: () => import('./features/inventory/pages/storage-size/storage-size').then(m => StorageModelPageComponent),
+        loadComponent: () => import('./features/inventory/pages/storage-size/storage-size').then(m => StorageSizePageComponent),
         canActivate: [authGuard]
     },
     {

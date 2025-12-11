@@ -13,9 +13,11 @@ import { AuthService } from '../../../services/auth.service';
 export class RegisterPageComponent {
   registerForm: FormGroup;
   errorMessage: string = '';
+  successMessage: string = '';
   isLoading: boolean = false;
   showPassword: boolean = false;
   showConfirmPassword: boolean = false;
+  showSuccessModal: boolean = false;
 
   private authService = inject(AuthService);
   private router = inject(Router);
@@ -24,6 +26,7 @@ export class RegisterPageComponent {
   ) {
     this.registerForm = this.fb.group({
       username: ['', [Validators.required, Validators.minLength(3)]],
+      email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]]
     }, { validators: this.passwordMatchValidator });
@@ -56,17 +59,22 @@ export class RegisterPageComponent {
     this.isLoading = true;
     this.errorMessage = '';
 
-    const { username, password, confirmPassword } = this.registerForm.value;
+    const { username, email, password, confirmPassword } = this.registerForm.value;
 
-    this.authService.register({ username, password, confirmPassword }).subscribe({
+    this.authService.register({ username, email, password, confirmPassword }).subscribe({
       next: (response: any) => {
         console.log('Registration successful', response);
-        alert('Account created successfully! Please log in.');
-        this.router.navigate(['/login']);
+        // show success message at top of form
+        this.successMessage = 'Account created successfully! You may now log in.';
+        this.errorMessage = '';
+        this.isLoading = false;
+        // optionally reset the form
+        this.registerForm.reset();
       },
       error: (error: any) => {
         console.error('Registration failed', error);
-        this.errorMessage = error.message || 'Registration failed. Please try again.';
+        this.errorMessage = error?.message || error?.error || 'Registration failed. Please try again.';
+        this.successMessage = '';
         this.isLoading = false;
       },
       complete: () => {
@@ -74,4 +82,5 @@ export class RegisterPageComponent {
       }
     });
   }
+  
 }

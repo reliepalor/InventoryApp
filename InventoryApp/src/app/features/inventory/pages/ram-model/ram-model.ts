@@ -28,8 +28,9 @@ export class RamModelPageComponent implements OnInit {
   currentRamModel: RamModelItem = {
     id: 0,
     referenceId: '',
-    ramModel: '',
-    ramType: ''
+    rmName: '',
+    rmType: '',
+    rmSpeed: ''
   };
 
   isEditMode: boolean = false;
@@ -78,8 +79,8 @@ export class RamModelPageComponent implements OnInit {
     const term = this.searchTerm.toLowerCase();
 
     this.filteredRamModels = this.ramModels.filter(r =>
-      (r.ramModel || '').toLowerCase().includes(term) ||
-      (r.ramType || '').toLowerCase().includes(term)
+      (r.rmName || '').toLowerCase().includes(term) ||
+      (r.rmType || '').toLowerCase().includes(term)
     );
   }
 
@@ -104,22 +105,23 @@ export class RamModelPageComponent implements OnInit {
     this.currentRamModel = {
       id: 0,
       referenceId: '',
-      ramModel: '',
-      ramType: ''
+      rmName: '',
+      rmType: '',
+      rmSpeed: ''
     };
     this.errorMessage = '';
   }
 
   onSubmit() {
-    if (!this.currentRamModel.ramModel || !this.currentRamModel.ramType) {
+    if (!this.currentRamModel.rmName || !this.currentRamModel.rmType || !this.currentRamModel.rmSpeed) {
       this.errorMessage = 'Please fill in all required fields.';
       return;
     }
 
-    const trimmedModel = this.currentRamModel.ramModel.trim();
+    const trimmedModel = this.currentRamModel.rmName.trim();
 
     const isDuplicate = this.ramModels.some(m => {
-      const sameModel = (m.ramModel || '').toLowerCase() === trimmedModel.toLowerCase();
+      const sameModel = (m.rmName || '').toLowerCase() === trimmedModel.toLowerCase();
       const isDifferent = this.isEditMode ? m.id !== this.currentRamModel.id : true;
       return sameModel && isDifferent;
     });
@@ -133,11 +135,12 @@ export class RamModelPageComponent implements OnInit {
     this.errorMessage = '';
 
     if (this.isEditMode) {
-      const updatePayload: RamModelItem = {
+      const updatePayload = {
         id: this.currentRamModel.id,
         referenceId: this.currentRamModel.referenceId || `RAM-${this.currentRamModel.id}`,
-        ramModel: trimmedModel,
-        ramType: this.currentRamModel.ramType.trim()
+        rmName: trimmedModel,
+        rmType: this.currentRamModel.rmType.trim(),
+        rmSpeed: this.currentRamModel.rmSpeed.trim()
       };
 
       this.ramModelService.updateRamModel(this.currentRamModel.id, updatePayload).subscribe({
@@ -168,8 +171,9 @@ export class RamModelPageComponent implements OnInit {
     } else {
       const newRam = {
         referenceId: `RAM-${Date.now()}`,
-        ramModel: trimmedModel,
-        ramType: this.currentRamModel.ramType.trim()
+        rmName: trimmedModel,
+        rmType: this.currentRamModel.rmType.trim(),
+        rmSpeed: this.currentRamModel.rmSpeed.trim()
       };
 
       this.ramModelService.createRamModel(newRam).subscribe({
@@ -183,7 +187,7 @@ export class RamModelPageComponent implements OnInit {
           console.error('Create error:', error);
           this.ramModelService.getAllRamModels().subscribe({
             next: (list) => {
-              const createdMatch = list.find(p => p.ramModel === newRam.ramModel);
+              const createdMatch = list.find(p => p.rmName === newRam.rmName);
               if (createdMatch) {
                 this.ramModels = list;
                 this.onSearch();

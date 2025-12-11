@@ -27,18 +27,9 @@ export class ProcessorPageComponent implements OnInit {
         id: 0,
         referenceId: '',
         processorName: '',
-        coreCount: 0,
-        threadCount: 0,
-        // keep other fields present if your ProcessorItem type requires them,
-        // but we won't use them in create/update payloads
-        baseClock: 0,
-        boostClock: 0,
-        cacheSize: 0,
-        tdp: 0,
-        socketType: '',
-        architecture: '',
-        lithography: 0,
-        releaseDate: ''
+        processorCore: '',
+        processorThreads: '',
+        iGpu: false
     };
 
     isEditMode: boolean = false;
@@ -114,16 +105,9 @@ export class ProcessorPageComponent implements OnInit {
             id: 0,
             referenceId: '',
             processorName: '',
-            coreCount: 0,
-            threadCount: 0,
-            baseClock: 0,
-            boostClock: 0,
-            cacheSize: 0,
-            tdp: 0,
-            socketType: '',
-            architecture: '',
-            lithography: 0,
-            releaseDate: ''
+            processorCore: '',
+            processorThreads: '',
+            iGpu: false
         };
         this.errorMessage = '';
     }
@@ -158,8 +142,9 @@ export class ProcessorPageComponent implements OnInit {
                 id: this.currentProcessor.id,
                 referenceId: this.currentProcessor.referenceId || `PROC-${this.currentProcessor.id}`,
                 processorName: trimmedProcessorName,
-                coreCount: this.currentProcessor.coreCount,
-                threadCount: this.currentProcessor.threadCount
+                processorCore: this.currentProcessor.processorCore,
+                processorThreads: this.currentProcessor.processorThreads,
+                iGpu: this.currentProcessor.iGpu
             };
 
             this.processorService.updateProcessor(this.currentProcessor.id, updateProcessor as ProcessorItem).subscribe({
@@ -197,8 +182,9 @@ export class ProcessorPageComponent implements OnInit {
             const newProcessor: Partial<ProcessorItem> = {
                 referenceId: `PROC-${Date.now()}`,
                 processorName: trimmedProcessorName,
-                coreCount: this.currentProcessor.coreCount,
-                threadCount: this.currentProcessor.threadCount
+                processorCore: this.currentProcessor.processorCore,
+                processorThreads: this.currentProcessor.processorThreads,
+                iGpu: this.currentProcessor.iGpu
             };
 
             this.processorService.createProcessor(newProcessor as ProcessorItem).subscribe({

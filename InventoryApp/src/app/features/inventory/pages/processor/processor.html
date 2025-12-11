@@ -107,11 +107,11 @@
 
           <!-- Form -->
           <form (ngSubmit)="onSubmit()" #processorForm="ngForm">
-            <div class="space-y-6">
-              <!-- Processor Name -->
-              <div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Processor Name (full width) -->
+              <div class="md:col-span-2">
                 <label for="processorName" class="block text-sm font-semibold text-gray-700 mb-2">
-                  Processor Name<span class="text-red-500">*</span>
+                  Processor Name <span class="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -120,39 +120,59 @@
                   [(ngModel)]="currentProcessor.processorName"
                   required
                   class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 bg-gray-50 hover:border-gray-300"
-                  placeholder="Enter processor name">
+                  placeholder="e.g. Intel Core i7-9700K">
+                <p class="mt-2 text-xs text-gray-500">Give a clear name so it's easy to identify in lists.</p>
               </div>
 
-              <!-- Core Count -->
+              <!-- Processor Core -->
               <div>
-                <label for="coreCount" class="block text-sm font-semibold text-gray-700 mb-2">
-                  Core Count
+                <label for="processorCore" class="block text-sm font-semibold text-gray-700 mb-2">
+                  Processor Core
                 </label>
                 <input
-                  type="number"
-                  id="coreCount"
-                  name="coreCount"
-                  [(ngModel)]="currentProcessor.coreCount"
+                  type="text"
+                  id="processorCore"
+                  name="processorCore"
+                  [(ngModel)]="currentProcessor.processorCore"
                   class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 bg-gray-50 hover:border-gray-300"
-                  placeholder="Enter core count">
+                  placeholder="e.g. 8 or 4">
+                <p class="mt-1 text-xs text-gray-400">Numeric or short text (e.g. '8' or '4 (HT)').</p>
               </div>
 
-              <!-- Thread Count -->
+              <!-- Processor Threads -->
               <div>
-                <label for="threadCount" class="block text-sm font-semibold text-gray-700 mb-2">
-                  Thread Count
+                <label for="processorThreads" class="block text-sm font-semibold text-gray-700 mb-2">
+                  Processor Threads
                 </label>
                 <input
-                  type="number"
-                  id="threadCount"
-                  name="threadCount"
-                  [(ngModel)]="currentProcessor.threadCount"
+                  type="text"
+                  id="processorThreads"
+                  name="processorThreads"
+                  [(ngModel)]="currentProcessor.processorThreads"
                   class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 bg-gray-50 hover:border-gray-300"
-                  placeholder="Enter thread count">
+                  placeholder="e.g. 16 or 8">
+                <p class="mt-1 text-xs text-gray-400">Use a numeric value or short descriptor.</p>
+              </div>
+
+              <!-- iGPU -->
+              <div>
+                <label for="iGpu" class="block text-sm font-semibold text-gray-700 mb-2">
+                  Integrated GPU
+                </label>
+                <select
+                  id="iGpu"
+                  name="iGpu"
+                  [(ngModel)]="currentProcessor.iGpu"
+                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 bg-gray-50 hover:border-gray-300">
+                  <option [ngValue]="false">No</option>
+                  <option [ngValue]="true">Yes</option>
+                </select>
+                <p class="mt-1 text-xs text-gray-400">Select whether the CPU has an integrated GPU.</p>
               </div>
             </div>
+
             <!-- Form Actions -->
-            <div class="flex justify-end gap-3 mt-8 pt-6 border-t border-gray-200">
+            <div class="flex flex-col sm:flex-row justify-end gap-3 mt-8 pt-6 border-t border-gray-200">
               <button
                 type="button"
                 (click)="closeForm()"

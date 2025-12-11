@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { SidebarService } from '../../../services/sidebar.service';
 
@@ -8,7 +8,6 @@ import { SidebarService } from '../../../services/sidebar.service';
   selector: 'app-sidebar',
   imports: [CommonModule, RouterModule],
   templateUrl: './sidebar.html',
-  // styleUrl: './sidebar.css',
 })
 export class Sidebar {
   isMaintenanceOpen = false;
@@ -32,9 +31,18 @@ export class Sidebar {
   private authService = inject(AuthService);
   private router = inject(Router);
   private sidebarService = inject(SidebarService);
+
   constructor() {
     this.sidebarService.sidebarOpen$.subscribe(isOpen => {
       this.isSidebarOpen = isOpen as boolean;
+    });
+
+    // Listen to route changes and keep maintenance open if route matches
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        const currentUrl = event.urlAfterRedirects;
+        this.isMaintenanceOpen = this.maintenanceItems.some(item => currentUrl.startsWith(item.route));
+      }
     });
   }
 

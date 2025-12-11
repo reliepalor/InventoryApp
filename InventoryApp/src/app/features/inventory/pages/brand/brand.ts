@@ -9,6 +9,26 @@ import { BrandTableComponent } from '../../components/brand-table/brand-table';
 import { SidebarService } from '../../../services/sidebar.service';
 import { BrandService, BrandItem } from '../../../services/brand.service';
 
+// Lookup services
+import { ModelService, ModelItem } from '../../../services/model.service';
+import { MotherboardService, MotherboardItem } from '../../../services/motherboard.service';
+import { OfficeInstalledService } from '../../../services/office-installed.service';
+import { OfficeInstalledItem } from '../../../models/office-installed';
+import { OsInstalledService } from '../../../services/os-installed.service';
+import { OsInstalledItem } from '../../../models/os-installed';
+import { ProcessorService, ProcessorItem } from '../../../services/processor.service';
+import { RamModelService } from '../../../services/ram-model.service';
+import { RamModelItem } from '../../../models/ram-model';
+import { RamSizeService } from '../../../services/ram-size.service';
+import { RamSizeItem } from '../../../models/ram-size';
+import { StorageModelService } from '../../../services/storage-model.service';
+import { StorageModelItem } from '../../../models/storage-model';
+import { StorageSizeService } from '../../../services/storage-size.service';
+import { StorageSizeItem } from '../../../models/storage-size';
+import { VideocardMemoryService } from '../../../services/videocard-memory.service';
+import { VideocardMemoryItem } from '../../../models/videocard-memory';
+import { VideocardModelService, VideoCardItem } from '../../../services/videocard-model.service';
+
 @Component({
   selector: 'app-brand',
   standalone: true,
@@ -20,7 +40,6 @@ export class BrandPageComponent implements OnInit {
 
   brands: BrandItem[] = [];
   filteredBrands: BrandItem[] = [];
-
   searchTerm = '';
   isSidebarOpen = true;
   isLoading = false;
@@ -30,10 +49,31 @@ export class BrandPageComponent implements OnInit {
   currentBrand: BrandItem = {
     id: 0,
     referenceId: '',
-    brandName: '',
-    country: '',
-    foundedYear: undefined
+    modelId: undefined,
+    motherboardId: undefined,
+    officeInstalledId: undefined,
+    osInstalledId: undefined,
+    processorId: undefined,
+    ramModelId: undefined,
+    ramSizeId: undefined,
+    storageModelId: undefined,
+    storageSizeId: undefined,
+    videocardMemoryId: undefined,
+    videocardModelId: undefined
   };
+
+  // Lookup lists for dropdowns
+  models: ModelItem[] = [];
+  motherboards: MotherboardItem[] = [];
+  officeInstalledList: OfficeInstalledItem[] = [];
+  osInstalledList: OsInstalledItem[] = [];
+  processors: ProcessorItem[] = [];
+  ramModels: RamModelItem[] = [];
+  ramSizes: RamSizeItem[] = [];
+  storageModels: StorageModelItem[] = [];
+  storageSizes: StorageSizeItem[] = [];
+  videocardMemories: VideocardMemoryItem[] = [];
+  videocardModels: VideoCardItem[] = [];
 
   isEditMode = false;
   showForm = false;
@@ -43,6 +83,18 @@ export class BrandPageComponent implements OnInit {
 
   private sidebarService = inject(SidebarService);
   private brandService = inject(BrandService);
+  // inject lookup services
+  private modelService = inject(ModelService);
+  private motherboardService = inject(MotherboardService);
+  private officeInstalledService = inject(OfficeInstalledService);
+  private osInstalledService = inject(OsInstalledService);
+  private processorService = inject(ProcessorService);
+  private ramModelService = inject(RamModelService);
+  private ramSizeService = inject(RamSizeService);
+  private storageModelService = inject(StorageModelService);
+  private storageSizeService = inject(StorageSizeService);
+  private videocardMemoryService = inject(VideocardMemoryService);
+  private videocardModelService = inject(VideocardModelService);
 
   constructor() {
     this.sidebarService.sidebarOpen$.subscribe(isOpen => {
@@ -52,6 +104,22 @@ export class BrandPageComponent implements OnInit {
 
   ngOnInit() {
     this.loadBrands();
+    this.loadLookups();
+  }
+
+  loadLookups() {
+    // load each lookup, ignore individual errors but ensure arrays at least empty
+    this.modelService.getAllModels().subscribe({ next: v => this.models = v, error: () => this.models = [] });
+    this.motherboardService.getAllMotherboards().subscribe({ next: v => this.motherboards = v, error: () => this.motherboards = [] });
+    this.officeInstalledService.getAllOfficeInstalled().subscribe({ next: v => this.officeInstalledList = v, error: () => this.officeInstalledList = [] });
+    this.osInstalledService.getAllOsInstalled().subscribe({ next: v => this.osInstalledList = v, error: () => this.osInstalledList = [] });
+    this.processorService.getAllProcessors().subscribe({ next: v => this.processors = v, error: () => this.processors = [] });
+    this.ramModelService.getAllRamModels().subscribe({ next: v => this.ramModels = v, error: () => this.ramModels = [] });
+    this.ramSizeService.getAllRamSizes().subscribe({ next: v => this.ramSizes = v, error: () => this.ramSizes = [] });
+    this.storageModelService.getAllStorageModels().subscribe({ next: v => this.storageModels = v, error: () => this.storageModels = [] });
+    this.storageSizeService.getAllStorageSizes().subscribe({ next: v => this.storageSizes = v, error: () => this.storageSizes = [] });
+    this.videocardMemoryService.getAll().subscribe({ next: v => this.videocardMemories = v, error: () => this.videocardMemories = [] });
+    this.videocardModelService.getAllVideocards().subscribe({ next: v => this.videocardModels = v, error: () => this.videocardModels = [] });
   }
 
   loadBrands() {
@@ -82,7 +150,7 @@ export class BrandPageComponent implements OnInit {
     const term = this.searchTerm.toLowerCase();
 
     this.filteredBrands = this.brands.filter(brand =>
-      (brand.brandName || '').toLowerCase().includes(term)
+      (brand.referenceId || '').toLowerCase().includes(term)
     );
   }
 
@@ -93,6 +161,7 @@ export class BrandPageComponent implements OnInit {
   openAddForm() {
     this.isEditMode = false;
     this.showForm = true;
+    console.log(this.ramSizes)
     this.resetForm();
   }
 
@@ -111,30 +180,24 @@ export class BrandPageComponent implements OnInit {
     this.currentBrand = {
       id: 0,
       referenceId: '',
-      brandName: '',
-      country: '',
-      foundedYear: undefined
+      modelId: undefined,
+      motherboardId: undefined,
+      officeInstalledId: undefined,
+      osInstalledId: undefined,
+      processorId: undefined,
+      ramModelId: undefined,
+      ramSizeId: undefined,
+      storageModelId: undefined,
+      storageSizeId: undefined,
+      videocardMemoryId: undefined,
+      videocardModelId: undefined
     };
     this.errorMessage = '';
   }
 
   onSubmit() {
-    if (!this.currentBrand.brandName?.trim()) {
-      this.errorMessage = 'Please provide a brand name.';
-      return;
-    }
-
-    const trimmed = this.currentBrand.brandName.trim();
-
-    const duplicate = this.brands.some(b =>
-      b.brandName?.toLowerCase() === trimmed.toLowerCase() &&
-      (!this.isEditMode || b.id !== this.currentBrand.id)
-    );
-
-    if (duplicate) {
-      this.errorMessage = `Brand already exists. Please use a different name.`;
-      return;
-    }
+    // No brandName/country/foundedYear validation (fields removed).
+    // Proceed to create/update using lookup ids and referenceId only.
 
     this.isLoading = true;
 
@@ -153,11 +216,21 @@ export class BrandPageComponent implements OnInit {
       });
     } else {
       const payload: Partial<BrandItem> = {
-        referenceId: `BRAND-${Date.now()}`,
-        brandName: trimmed,
-        country: this.currentBrand.country,
-        foundedYear: this.currentBrand.foundedYear
+        referenceId: `BRAND-${Date.now()}`
       };
+
+      // include optional lookup ids if provided
+      if (this.currentBrand.modelId) payload.modelId = this.currentBrand.modelId;
+      if (this.currentBrand.motherboardId) payload.motherboardId = this.currentBrand.motherboardId;
+      if (this.currentBrand.officeInstalledId) payload.officeInstalledId = this.currentBrand.officeInstalledId;
+      if (this.currentBrand.osInstalledId) payload.osInstalledId = this.currentBrand.osInstalledId;
+      if (this.currentBrand.processorId) payload.processorId = this.currentBrand.processorId;
+      if (this.currentBrand.ramModelId) payload.ramModelId = this.currentBrand.ramModelId;
+      if (this.currentBrand.ramSizeId) payload.ramSizeId = this.currentBrand.ramSizeId;
+      if (this.currentBrand.storageModelId) payload.storageModelId = this.currentBrand.storageModelId;
+      if (this.currentBrand.storageSizeId) payload.storageSizeId = this.currentBrand.storageSizeId;
+      if (this.currentBrand.videocardMemoryId) payload.videocardMemoryId = this.currentBrand.videocardMemoryId;
+      if (this.currentBrand.videocardModelId) payload.videocardModelId = this.currentBrand.videocardModelId;
 
       this.brandService.createBrand(payload as BrandItem).subscribe({
         next: (createdBrand) => {

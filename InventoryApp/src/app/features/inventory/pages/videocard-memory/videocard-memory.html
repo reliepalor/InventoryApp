@@ -107,34 +107,144 @@
 
           <form (ngSubmit)="onSubmit()" #vcForm="ngForm">
             <div class="space-y-6">
-              <!-- VideoCard Memory -->
+              <!-- VideoCard Memory (Size) -->
               <div>
-                <label for="videoCardMemory" class="block text-sm font-semibold text-gray-700 mb-2">
+                <label for="vRamSizeSelect" class="block text-sm font-semibold text-gray-700 mb-2">
                   VideoCard Memory<span class="text-red-500">*</span>
                 </label>
-                <input 
-                  type="text" 
-                  id="videoCardMemory"
-                  name="videoCardMemory"
-                  [(ngModel)]="currentVideoCardMemory.videoCardMemory"
-                  required
-                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 bg-gray-50 hover:border-gray-300"
-                  placeholder="Enter memory value (e.g., 8GB, 12GB)">
+
+                <div class="flex gap-3 items-center">
+                  <div class="flex-1">
+                    <select
+                      id="vRamSizeSelect"
+                      name="vRamSizeSelect"
+                      [(ngModel)]="selectedSize"
+                      (change)="onSizeChange()"
+                      required
+                      class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 bg-gray-50 hover:border-gray-300">
+                      <option value="" disabled>Select size...</option>
+                      <option *ngFor="let s of sizes" [value]="s">{{ s }}</option>
+                      <option value="custom">Custom...</option>
+                    </select>
+                  </div>
+                
+                </div>
+
+                <div *ngIf="selectedSize === 'custom'" class="mt-4">
+                  <input
+                    type="text"
+                    id="customSize"
+                    name="customSize"
+                    [(ngModel)]="customSize"
+                    placeholder="Enter custom size (e.g., 12 GB, 11GB)"
+                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 bg-gray-50 hover:border-gray-300"
+                    required>
+                </div>
               </div>
 
               <!-- Memory Type -->
               <div>
-                <label for="memoryType" class="block text-sm font-semibold text-gray-700 mb-2">
+                <label for="vRamTypeSelect" class="block text-sm font-semibold text-gray-700 mb-2">
                   Memory Type<span class="text-red-500">*</span>
                 </label>
-                <input 
-                  type="text" 
-                  id="memoryType"
-                  name="memoryType"
-                  [(ngModel)]="currentVideoCardMemory.memoryType"
-                  required
-                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 bg-gray-50 hover:border-gray-300"
-                  placeholder="Enter memory type (e.g., GDDR6, GDDR6X)">
+
+                <div class="flex gap-3 items-center">
+                  <div class="flex-1">
+                    <select
+                      id="vRamTypeSelect"
+                      name="vRamTypeSelect"
+                      [(ngModel)]="selectedType"
+                      (change)="onTypeChange()"
+                      required
+                      class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 bg-gray-50 hover:border-gray-300">
+                      <option value="" disabled>Select type...</option>
+                      <option *ngFor="let t of types" [value]="t">{{ t }}</option>
+                      <option value="custom">Custom...</option>
+                    </select>
+                  </div>
+                
+                </div>
+
+                <div *ngIf="selectedType === 'custom'" class="mt-4">
+                  <input
+                    type="text"
+                    id="customType"
+                    name="customType"
+                    [(ngModel)]="customType"
+                    placeholder="Enter custom type (e.g., GDDR6X)"
+                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 bg-gray-50 hover:border-gray-300"
+                    required>
+                </div>
+              </div>
+
+              <!-- Memory VRAM Bus -->
+              <div>
+                <label for="vRamBusSelect" class="block text-sm font-semibold text-gray-700 mb-2">
+                  VRAM Bus<span class="text-red-500">*</span>
+                </label>
+
+                <div class="flex gap-3 items-center">
+                  <div class="flex-1">
+                    <select
+                      id="vRamBusSelect"
+                      name="vRamBusSelect"
+                      [(ngModel)]="selectedBus"
+                      (change)="onBusChange()"
+                      required
+                      class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 bg-gray-50 hover:border-gray-300">
+                      <option value="" disabled>Select bus width...</option>
+                      <option *ngFor="let b of buses" [value]="b">{{ b }}</option>
+                      <option value="custom">Custom...</option>
+                    </select>
+                  </div>
+                  
+                </div>
+
+                <div *ngIf="selectedBus === 'custom'" class="mt-4">
+                  <input
+                    type="text"
+                    id="customBus"
+                    name="customBus"
+                    [(ngModel)]="customBus"
+                    placeholder="Enter custom bus (e.g., 256-bit)"
+                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 bg-gray-50 hover:border-gray-300"
+                    required>
+                </div>
+              </div>
+
+              <!-- Memory VRAM Speed -->
+              <div>
+                <label for="vRamSpeedSelect" class="block text-sm font-semibold text-gray-700 mb-2">
+                  VRAM Speed<span class="text-red-500">*</span>
+                </label>
+
+                <div class="flex gap-3 items-center">
+                  <div class="flex-1">
+                    <select
+                      id="vRamSpeedSelect"
+                      name="vRamSpeedSelect"
+                      [(ngModel)]="selectedSpeed"
+                      (change)="onSpeedChange()"
+                      required
+                      class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 bg-gray-50 hover:border-gray-300">
+                      <option value="" disabled>Select speed...</option>
+                      <option *ngFor="let sp of speeds" [value]="sp">{{ sp }}</option>
+                      <option value="custom">Custom...</option>
+                    </select>
+                  </div>
+                
+                </div>
+
+                <div *ngIf="selectedSpeed === 'custom'" class="mt-4">
+                  <input
+                    type="text"
+                    id="customSpeed"
+                    name="customSpeed"
+                    [(ngModel)]="customSpeed"
+                    placeholder="Enter custom speed (e.g., 16 Gbps)"
+                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 bg-gray-50 hover:border-gray-300"
+                    required>
+                </div>
               </div>
             </div>
 
@@ -149,7 +259,7 @@
               </button>
               <button 
                 type="submit"
-                [disabled]="!vcForm.form.valid || isLoading"
+                [disabled]="!vcForm.form.valid || isLoading || !isFormValid(vcForm)"
                 class="px-8 py-3 bg-gradient-to-br from-[#66D17A] to-[#2E8E46] text-white rounded-lg hover:from-[#5bc270] hover:to-[#267a3c] disabled:bg-gray-300 disabled:cursor-not-allowed transition-all flex items-center gap-2 font-medium shadow-md hover:shadow-lg">
                 <span *ngIf="isLoading" class="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></span>
                 <svg *ngIf="!isLoading" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -181,7 +291,7 @@
             <h3 class="text-2xl font-bold text-gray-900 mb-3">Delete VideoCard Memory</h3>
             <p class="text-gray-600 mb-2">Are you sure you want to delete</p>
             <div class="bg-gray-50 rounded-lg p-3 my-4 border-2 border-red-200">
-              <p class="text-lg font-bold text-gray-900">"{{ videoCardMemoryToDelete?.videoCardMemory }} {{ videoCardMemoryToDelete?.memoryType }}"</p>
+              <p class="text-lg font-bold text-gray-900">"{{ videoCardMemoryToDelete?.vRamSize }} {{ videoCardMemoryToDelete?.vRamType }}"</p>
             </div>
             <p class="text-sm text-red-600 font-medium mb-6">⚠️ This action cannot be undone</p>
           </div>

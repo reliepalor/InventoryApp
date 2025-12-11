@@ -1,6 +1,7 @@
 export interface RamModelItem {
     id: number;
     referenceId: string;
-    ramModel: string;
-    ramType: string;
+    rmName: string;
+    rmType: string;
+    rmSpeed: string;
 }

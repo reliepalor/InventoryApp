@@ -63,16 +63,9 @@ export interface ProcessorItem {
   id: number;
   referenceId: string;
   processorName: string;
-  coreCount: number;
-  threadCount: number;
-  baseClock: number;
-  boostClock: number;
-  cacheSize: number;
-  tdp: number;
-  socketType: string;
-  architecture: string;
-  lithography: number;
-  releaseDate: string;
+  processorCore: string;
+  processorThreads: string;
+  iGpu: boolean;
   created_at?: string;
   updated_at?: string;
 }
@@ -80,30 +73,16 @@ export interface ProcessorItem {
 export interface CreateProcessorRequest {
   referenceId: string;
   processorName: string;
-  coreCount: number;
-  threadCount: number;
-  baseClock: number;
-  boostClock: number;
-  cacheSize: number;
-  tdp: number;
-  socketType: string;
-  architecture: string;
-  lithography: number;
-  releaseDate: string;
+  processorCore: string;
+  processorThreads: string;
+  iGpu: boolean;
 }
 
 export interface UpdateProcessorRequest {
   id: number;
   referenceId: string;
   processorName: string;
-  coreCount: number;
-  threadCount: number;
-  baseClock: number;
-  boostClock: number;
-  cacheSize: number;
-  tdp: number;
-  socketType: string;
-  architecture: string;
-  lithography: number;
-  releaseDate: string;
+  processorCore: string;
+  processorThreads: string;
+  iGpu: boolean;
 }

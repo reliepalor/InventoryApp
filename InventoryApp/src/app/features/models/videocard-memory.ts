@@ -1,6 +1,8 @@
 export interface VideocardMemoryItem {
     id: number;
     referenceId: string;
-    videoCardMemory: string;
-    memoryType: string;
+    vRamSize: string;
+    vRamType: string;
+    vRamBus: string;
+    vRamSpeed: string;
 }

@@ -29,9 +29,30 @@ export class VideocardMemoryPageComponent implements OnInit {
   currentVideoCardMemory: VideocardMemoryItem = {
     id: 0,
     referenceId: '',
-    videoCardMemory: '',
-    memoryType: ''
+    vRamSize: '',
+    vRamType: '',
+    vRamBus: '',
+    vRamSpeed: '',
   };
+
+  // presets for dropdowns
+  sizes: string[] = ['2 GB','4 GB','6 GB','8 GB','10 GB','12 GB','16 GB','24 GB','32 GB'];
+  types: string[] = ['GDDR5','GDDR5X','GDDR6','GDDR6X','HBM2','HBM2e','HBM3'];
+  buses: string[] = ['64-bit','128-bit','192-bit','256-bit','320-bit','384-bit','512-bit'];
+  speeds: string[] = ['7 Gbps','8 Gbps','10 Gbps','12 Gbps','14 Gbps','16 Gbps','18 Gbps'];
+
+  // selected / custom values
+  selectedSize: string = '';
+  customSize: string = '';
+
+  selectedType: string = '';
+  customType: string = '';
+
+  selectedBus: string = '';
+  customBus: string = '';
+
+  selectedSpeed: string = '';
+  customSpeed: string = '';
 
   isEditMode: boolean = false;
   showForm: boolean = false;
@@ -79,8 +100,10 @@ export class VideocardMemoryPageComponent implements OnInit {
     const term = this.searchTerm.toLowerCase();
 
     this.filteredVideoCardMemories = this.videoCardMemories.filter(v =>
-      (v.videoCardMemory || '').toLowerCase().includes(term) ||
-      (v.memoryType || '').toLowerCase().includes(term)
+      (v.vRamSize || '').toLowerCase().includes(term) ||
+      (v.vRamType || '').toLowerCase().includes(term) ||
+      (v.vRamBus || '').toLowerCase().includes(term) ||
+      (v.vRamSpeed || '').toLowerCase().includes(term)
     );
   }
 
@@ -94,6 +117,19 @@ export class VideocardMemoryPageComponent implements OnInit {
     this.isEditMode = true;
     this.showForm = true;
     this.currentVideoCardMemory = { ...model };
+
+    // pre-select or mark custom for each field
+    const sizeMatch = this.sizes.find(s => s.toLowerCase() === (model.vRamSize || '').toLowerCase());
+    if (sizeMatch) { this.selectedSize = sizeMatch; this.customSize = ''; } else { this.selectedSize = 'custom'; this.customSize = model.vRamSize || ''; }
+
+    const typeMatch = this.types.find(t => t.toLowerCase() === (model.vRamType || '').toLowerCase());
+    if (typeMatch) { this.selectedType = typeMatch; this.customType = ''; } else { this.selectedType = 'custom'; this.customType = model.vRamType || ''; }
+
+    const busMatch = this.buses.find(b => b.toLowerCase() === (model.vRamBus || '').toLowerCase());
+    if (busMatch) { this.selectedBus = busMatch; this.customBus = ''; } else { this.selectedBus = 'custom'; this.customBus = model.vRamBus || ''; }
+
+    const speedMatch = this.speeds.find(sp => sp.toLowerCase() === (model.vRamSpeed || '').toLowerCase());
+    if (speedMatch) { this.selectedSpeed = speedMatch; this.customSpeed = ''; } else { this.selectedSpeed = 'custom'; this.customSpeed = model.vRamSpeed || ''; }
   }
 
   closeForm() {
@@ -105,30 +141,70 @@ export class VideocardMemoryPageComponent implements OnInit {
     this.currentVideoCardMemory = {
       id: 0,
       referenceId: '',
-      videoCardMemory: '',
-      memoryType: ''
+      vRamSize: '',
+      vRamType: '',
+      vRamBus: '',
+      vRamSpeed: '',
     };
+
+    this.selectedSize = '';
+    this.customSize = '';
+
+    this.selectedType = '';
+    this.customType = '';
+
+    this.selectedBus = '';
+    this.customBus = '';
+
+    this.selectedSpeed = '';
+    this.customSpeed = '';
+
     this.errorMessage = '';
   }
 
+  // change handlers
+  onSizeChange() { if (this.selectedSize !== 'custom') this.customSize = ''; }
+  onTypeChange() { if (this.selectedType !== 'custom') this.customType = ''; }
+  onBusChange()  { if (this.selectedBus !== 'custom')  this.customBus = '';  }
+  onSpeedChange(){ if (this.selectedSpeed !== 'custom') this.customSpeed = ''; }
+
+  clearSizeSelection()  { this.selectedSize = ''; this.customSize = ''; }
+  clearTypeSelection()  { this.selectedType = ''; this.customType = ''; }
+  clearBusSelection()   { this.selectedBus = ''; this.customBus = ''; }
+  clearSpeedSelection() { this.selectedSpeed = ''; this.customSpeed = ''; }
+
+  // ensure required values are present depending on dropdown/custom usage
+  isFormValid(form: any): boolean {
+    const finalSize   = this.selectedSize === 'custom' ? (this.customSize || '').trim() : (this.selectedSize || '').trim();
+    const finalType   = this.selectedType === 'custom' ? (this.customType || '').trim() : (this.selectedType || '').trim();
+    const finalBus    = this.selectedBus === 'custom'  ? (this.customBus  || '').trim() : (this.selectedBus  || '').trim();
+    const finalSpeed  = this.selectedSpeed === 'custom'? (this.customSpeed|| '').trim() : (this.selectedSpeed || '').trim();
+
+    return !!(finalSize && finalType && finalBus && finalSpeed);
+  }
+
   onSubmit() {
-    if (!this.currentVideoCardMemory.videoCardMemory || !this.currentVideoCardMemory.memoryType) {
+    const finalSize   = this.selectedSize === 'custom' ? (this.customSize || '').trim() : (this.selectedSize || '').trim();
+    const finalType   = this.selectedType === 'custom' ? (this.customType || '').trim() : (this.selectedType || '').trim();
+    const finalBus    = this.selectedBus === 'custom'  ? (this.customBus  || '').trim() : (this.selectedBus  || '').trim();
+    const finalSpeed  = this.selectedSpeed === 'custom'? (this.customSpeed|| '').trim() : (this.selectedSpeed || '').trim();
+
+    if (!finalSize || !finalType || !finalBus || !finalSpeed) {
       this.errorMessage = 'Please fill in all required fields.';
       return;
     }
 
-    const trimmedMemory = this.currentVideoCardMemory.videoCardMemory.trim();
-    const trimmedType = this.currentVideoCardMemory.memoryType.trim();
-
     const isDuplicate = this.videoCardMemories.some(m => {
-      const same = ((m.videoCardMemory || '').toLowerCase() === trimmedMemory.toLowerCase()) &&
-                   ((m.memoryType || '').toLowerCase() === trimmedType.toLowerCase());
+      const same = ((m.vRamSize || '').toLowerCase() === finalSize.toLowerCase()) &&
+                   ((m.vRamType || '').toLowerCase() === finalType.toLowerCase()) &&
+                   ((m.vRamBus || '').toLowerCase() === finalBus.toLowerCase()) &&
+                   ((m.vRamSpeed || '').toLowerCase() === finalSpeed.toLowerCase());
       const isDifferent = this.isEditMode ? m.id !== this.currentVideoCardMemory.id : true;
       return same && isDifferent;
     });
 
     if (isDuplicate) {
-      this.errorMessage = `Video card memory entry already exists. Please use a different value.`;
+      this.errorMessage = `Video card memory entry already exists. Please use different values.`;
       return;
     }
 
@@ -139,23 +215,22 @@ export class VideocardMemoryPageComponent implements OnInit {
       const updatePayload: VideocardMemoryItem = {
         id: this.currentVideoCardMemory.id,
         referenceId: this.currentVideoCardMemory.referenceId || `VCM-${this.currentVideoCardMemory.id}`,
-        videoCardMemory: trimmedMemory,
-        memoryType: trimmedType
+        vRamSize: finalSize,
+        vRamType: finalType,
+        vRamBus: finalBus,
+        vRamSpeed: finalSpeed
       };
 
       this.videocardMemoryService.update(this.currentVideoCardMemory.id, updatePayload).subscribe({
         next: (updated) => {
           const index = this.videoCardMemories.findIndex(r => r.id === this.currentVideoCardMemory.id);
-          if (index !== -1) {
-            this.videoCardMemories[index] = updated;
-          }
+          if (index !== -1) { this.videoCardMemories[index] = updated; }
           this.onSearch();
           this.closeForm();
           this.isLoading = false;
         },
         error: (error) => {
           console.error('Update error:', error);
-          // fallback: refresh list
           this.videocardMemoryService.getAll().subscribe({
             next: (list) => {
               this.videoCardMemories = list;
@@ -172,8 +247,10 @@ export class VideocardMemoryPageComponent implements OnInit {
       const newItem: VideocardMemoryItem = {
         id: 0,
         referenceId: `VCM-${Date.now()}`,
-        videoCardMemory: trimmedMemory,
-        memoryType: trimmedType
+        vRamSize: finalSize,
+        vRamType: finalType,
+        vRamBus: finalBus,
+        vRamSpeed: finalSpeed
       };
 
       this.videocardMemoryService.create(newItem).subscribe({
@@ -187,7 +264,12 @@ export class VideocardMemoryPageComponent implements OnInit {
           console.error('Create error:', error);
           this.videocardMemoryService.getAll().subscribe({
             next: (list) => {
-              const createdMatch = list.find(p => p.videoCardMemory === newItem.videoCardMemory && p.memoryType === newItem.memoryType);
+              const createdMatch = list.find(p =>
+                p.vRamSize === newItem.vRamSize &&
+                p.vRamType === newItem.vRamType &&
+                p.vRamBus === newItem.vRamBus &&
+                p.vRamSpeed === newItem.vRamSpeed
+              );
               if (createdMatch) {
                 this.videoCardMemories = list;
                 this.onSearch();

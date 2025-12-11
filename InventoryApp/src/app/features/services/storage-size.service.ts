@@ -66,13 +66,11 @@ export class StorageSizeService {
 /* Request DTOs — adjust fields to match your backend contract */
 export interface CreateStorageSizeRequest {
   referenceId?: string;
-  storageModel: string;
   storageSize: string; // e.g. "512 GB", "1 TB"
 }
 
 export interface UpdateStorageSizeRequest {
   id: number;
   referenceId?: string;
-  storageModel: string;
   storageSize: string;
 }

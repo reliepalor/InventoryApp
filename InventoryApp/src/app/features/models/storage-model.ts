@@ -1,6 +1,7 @@
 export interface StorageModelItem {
     id: number;
     referenceId: string;
-    storageModel: string;
+    storageName: string;
     storageType: string;
+    storageInterface: string;
 }

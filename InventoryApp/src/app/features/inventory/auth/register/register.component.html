@@ -37,8 +37,11 @@
 
       <!-- Form -->
       <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-6">
-        <!-- Error Message -->
-        <div *ngIf="errorMessage" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+        <!-- Success / Error Messages -->
+        <div *ngIf="successMessage" class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm">
+          {{ successMessage }}
+        </div>
+        <div *ngIf="errorMessage" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mt-3">
           {{ errorMessage }}
         </div>
 
@@ -56,6 +59,22 @@
           />
           <p *ngIf="registerForm.get('username')?.invalid && registerForm.get('username')?.touched" class="text-xs text-red-500 mt-1">
             Username must be at least 3 characters
+          </p>
+        </div>
+        <!-- Email -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">
+            Email<span class="text-red-500 ml-0.5">*</span>
+          </label>
+          <input 
+            type="email"
+            formControlName="email" 
+            placeholder="Enter your email" 
+            class="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 hover:border-gray-300"
+            [class.border-red-300]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
+          />
+          <p *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" class="text-xs text-red-500 mt-1">
+            Email must be a valid address
           </p>
         </div>
 

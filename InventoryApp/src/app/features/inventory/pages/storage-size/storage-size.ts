@@ -8,7 +8,6 @@ import { SidebarService } from '../../../services/sidebar.service';
 import { StorageSizeService } from '../../../services/storage-size.service';
 import { StorageSizeItem } from '../../../models/storage-size';
 
-
 @Component({
   selector: 'app-storage-size',
   standalone: true,
@@ -29,9 +28,13 @@ export class StorageSizePageComponent implements OnInit {
   currentStorage: StorageSizeItem = {
     id: 0,
     referenceId: '',
-    storageModel: '',
     storageSize: ''
   };
+
+  // Dropdown/custom size fields
+  sizes: string[] = ['16 GB','32 GB','64 GB','128 GB','256 GB','512 GB','1 TB','2 TB','4 TB'];
+  selectedSize: string = '';
+  customSize: string = '';
 
   isEditMode: boolean = false;
   showForm: boolean = false;
@@ -79,7 +82,6 @@ export class StorageSizePageComponent implements OnInit {
     const term = this.searchTerm.toLowerCase();
 
     this.filteredStorageSizes = this.storageSizes.filter(s =>
-      (s.storageModel || '').toLowerCase().includes(term) ||
       (s.storageSize || '').toLowerCase().includes(term)
     );
   }
@@ -94,6 +96,16 @@ export class StorageSizePageComponent implements OnInit {
     this.isEditMode = true;
     this.showForm = true;
     this.currentStorage = { ...item };
+
+    // pre-select dropdown if matches known sizes, otherwise show custom
+    const match = this.sizes.find(s => s.toLowerCase() === (item.storageSize || '').toLowerCase());
+    if (match) {
+      this.selectedSize = match;
+      this.customSize = '';
+    } else {
+      this.selectedSize = 'custom';
+      this.customSize = item.storageSize || '';
+    }
   }
 
   closeForm() {
@@ -105,26 +117,47 @@ export class StorageSizePageComponent implements OnInit {
     this.currentStorage = {
       id: 0,
       referenceId: '',
-      storageModel: '',
       storageSize: ''
     };
+    this.selectedSize = '';
+    this.customSize = '';
     this.errorMessage = '';
   }
 
+  onSizeSelectionChange() {
+    // If switching to a known preset, clear custom input
+    if (this.selectedSize !== 'custom') {
+      this.customSize = '';
+    }
+  }
+
+  clearSizeSelection() {
+    this.selectedSize = '';
+    this.customSize = '';
+  }
+
+  // helper used to disable submit when form not valid
+  isFormValid(form: any): boolean {
+    // require either a selected preset, or customSize when selectedSize === 'custom'
+    if (this.selectedSize === 'custom') {
+      return !!(this.customSize && this.customSize.trim());
+    }
+    return !!(this.selectedSize && this.selectedSize.trim());
+  }
+
   onSubmit() {
-    if (!this.currentStorage.storageModel || !this.currentStorage.storageSize) {
+    // determine final storage size string from selection or custom input
+    const finalSize = (this.selectedSize === 'custom') ? (this.customSize || '').trim() : (this.selectedSize || '').trim();
+
+    if (!finalSize) {
       this.errorMessage = 'Please fill in all required fields.';
       return;
     }
 
-    const trimmedModel = this.currentStorage.storageModel.trim();
-    const trimmedSize = this.currentStorage.storageSize.trim();
-
     const isDuplicate = this.storageSizes.some(m => {
-      const sameModel = (m.storageModel || '').toLowerCase() === trimmedModel.toLowerCase();
-      const sameSize = (m.storageSize || '').toLowerCase() === trimmedSize.toLowerCase();
+      const sameSize = (m.storageSize || '').toLowerCase() === finalSize.toLowerCase();
       const isDifferent = this.isEditMode ? m.id !== this.currentStorage.id : true;
-      return sameModel && sameSize && isDifferent;
+      return sameSize && isDifferent;
     });
 
     if (isDuplicate) {
@@ -139,8 +172,7 @@ export class StorageSizePageComponent implements OnInit {
       const updatePayload: StorageSizeItem = {
         id: this.currentStorage.id,
         referenceId: this.currentStorage.referenceId || `STG-${this.currentStorage.id}`,
-        storageModel: trimmedModel,
-        storageSize: trimmedSize
+        storageSize: finalSize
       };
 
       this.storageService.updateStorageSize(this.currentStorage.id, updatePayload).subscribe({
@@ -171,8 +203,7 @@ export class StorageSizePageComponent implements OnInit {
     } else {
       const newStorage = {
         referenceId: `STG-${Date.now()}`,
-        storageModel: trimmedModel,
-        storageSize: trimmedSize
+        storageSize: finalSize
       };
 
       this.storageService.createStorageSize(newStorage).subscribe({
@@ -186,7 +217,7 @@ export class StorageSizePageComponent implements OnInit {
           console.error('Create error:', error);
           this.storageService.getAllStorageSizes().subscribe({
             next: (list) => {
-              const createdMatch = list.find(p => p.storageModel === newStorage.storageModel && p.storageSize === newStorage.storageSize);
+              const createdMatch = list.find(p => p.storageSize === newStorage.storageSize);
               if (createdMatch) {
                 this.storageSizes = list;
                 this.onSearch();

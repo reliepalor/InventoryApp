@@ -1,10 +1,11 @@
 <aside 
   [class.w-72]="isSidebarOpen"
   [class.w-20]="!isSidebarOpen"
-  class="h-screen bg-gradient-to-br from-gray-50 to-green-50/30 border-r-2 border-gray-200 fixed left-0 top-0 overflow-y-auto shadow-lg scrollbar-hide transition-all duration-300 z-40">
+  [class.no-scroll]="isMaintenanceOpen"
+  class="h-screen bg-gradient-to-br from-gray-50 to-green-50/30 border-r-2 border-gray-200 fixed left-0 top-0 overflow-y-scroll shadow-lg [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden transition-all duration-300 z-40">
   <nav class="flex flex-col gap-2 transition-all duration-300" [class.p-6]="isSidebarOpen" [class.p-2]="!isSidebarOpen">
     <!-- Logo & Brand -->
-    <div class="mb-6 pb-6 border-b-2 border-gray-200">
+    <div class="mb-6 pb-6 border-b-2 mr-4 border-gray-200">
       <div class="flex items-center transition-all duration-300" [class.justify-center]="isSidebarOpen" [class.flex-col]="!isSidebarOpen" [class.gap-2]="!isSidebarOpen">
         <div class="flex items-center justify-center flex-shrink-0 transition-all duration-300" [class.w-20]="isSidebarOpen" [class.h-20]="isSidebarOpen" [class.w-12]="!isSidebarOpen" [class.h-12]="!isSidebarOpen">
           <svg 
