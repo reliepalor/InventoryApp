@@ -1,7 +1,0 @@
-.nav-link {
-  @apply text-sm text-slate-600 hover:text-slate-900 transition-colors;
-}
-
-.nav-link-active {
-  @apply text-slate-900 font-semibold;
-}
