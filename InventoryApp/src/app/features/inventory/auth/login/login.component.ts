@@ -1,4 +1,4 @@
-import { Component, inject, NgZone } from '@angular/core';
+import { Component, inject, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
@@ -17,8 +17,35 @@ import { Observable } from 'rxjs';
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './login.component.html'
 })
-export class LoginPageComponent {
-  // use typed form group for stronger type checking
+export class LoginPageComponent implements OnInit, OnDestroy{
+
+  verses = [
+    {
+      reference: 'Proverbs 16:3',
+      text: 'Commit to the Lord whatever you do, and he will establish your plans.'
+    },
+    {
+      reference: 'Psalm 37:5',
+      text: 'Commit your way to the Lord; trust in him and he will do this.'
+    },
+    {
+      reference: 'Jeremiah 29:11',
+      text: 'For I know the plans I have for you, declares the Lord, plans to prosper you and not to harm you.'
+    },
+    {
+      reference: 'Philippians 4:13',
+      text: 'I can do all things through Christ who strengthens me.'
+    },
+    {
+      reference: 'Psalm 127:1',
+      text: 'Unless the Lord builds the house, the builders labor in vain.'
+    }
+  ];
+
+  currentVerseIndex = 0;
+  isFading= false;
+  private verseIntervalId?: number;
+
   loginForm = new FormGroup({
     username: new FormControl<string>('', {
       nonNullable: true,
@@ -35,6 +62,7 @@ export class LoginPageComponent {
   isLoading = false;
   showPassword = false;
   returnUrl = '/dashboard';
+
 
   // prefer consistent injection style
   private authService = inject(AuthService);
@@ -57,6 +85,33 @@ export class LoginPageComponent {
       // if authService.isLoggedIn isn't present or throws, silently ignore
       console.warn('AuthService isLoggedIn check failed', e);
     }
+  }
+
+  ngOnInit(): void {
+    this.startVerseLoop();
+  }
+
+  ngOnDestroy(): void {
+    if (this.verseIntervalId){
+      clearInterval(this.verseIntervalId);
+    }
+  }
+
+  startVerseLoop(): void {
+    this.verseIntervalId = window.setInterval(() => {
+      this.isFading = true;
+
+      setTimeout(() => {
+        this.currentVerseIndex =
+        (this.currentVerseIndex + 1) % this.verses.length;
+
+        this.isFading = false;
+      }, 500);
+    }, 5000);
+  }
+
+  get currentVerse(){
+    return this.verses[this.currentVerseIndex];
   }
 
   togglePasswordVisibility(): void {

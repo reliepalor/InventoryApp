@@ -65,6 +65,26 @@
       <span *ngIf="isSidebarOpen">Inventory</span>
     </a>
 
+        <!-- Add Item tables -->
+    <a
+      routerLink="/add-table"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: false }"
+      [title]="!isSidebarOpen ? 'Add-Table' : ''"
+      class="cursor-pointer flex items-center gap-3 bg-white border-2 border-gray-200 rounded-lg text-gray-700 font-semibold transition-all duration-200 hover:border-green-500 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 mt-2 [&.active]:bg-green-600 [&.active]:text-white [&.active]:border-green-600 [&.active]:shadow-lg"
+      [class.px-4]="isSidebarOpen"
+      [class.py-3]="isSidebarOpen"
+      [class.p-3]="!isSidebarOpen"
+      [class.justify-center]="!isSidebarOpen"
+    >
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+      </svg>
+      <span *ngIf="isSidebarOpen">Add Items</span>
+    </a>
+    
+
     <!-- Maintenance Dropdown (Expanded Sidebar) -->
     <div class="flex flex-col" *ngIf="isSidebarOpen">
       <button
@@ -84,7 +104,7 @@
         </svg>
       </button>
 
-      <div class="overflow-hidden transition-all duration-300" [class.max-h-0]="!isMaintenanceOpen" [class.max-h-[600px]]="isMaintenanceOpen">
+      <div class="overflow-y-auto transition-all duration-300 max-h-[400px] [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden" [class.max-h-0]="!isMaintenanceOpen">
         <div class="mt-2 space-y-1">
           <a *ngFor="let item of maintenanceItems; trackBy: trackByRoute"
              [routerLink]="item.route"

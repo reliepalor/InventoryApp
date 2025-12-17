@@ -5,9 +5,9 @@
     <div class="w-full max-w-md">
       <!-- Logo & Title -->
       <div class="mb-8">
-        <div class="flex items-center justify-center mb-6">
+        <div class="flex items-center justify-center mb-6 gap-1">
           <div class="w-20 h-20 flex items-center justify-center flex-shrink-0">
-            <svg 
+            <!-- <svg 
               class="w-full h-full"
               viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"
             >
@@ -29,7 +29,10 @@
                 <text x="100" y="135" font-size="38" font-weight="700"
                       text-anchor="middle" fill="#ffffff">kmbi</text>
               </g>
-            </svg>
+            </svg> -->
+
+            <div class=""><img src="assets/images/logo/kmbi_logo.png" alt="KMBI logo" style="max-width: 80px; height: auto;" title="Kabalikat Para Sa Maunlad na Buhat Inc." class="cursor-pointer"></div>
+
           </div>
           <span class="text-4xl font-bold text-green-600 leading-none mt-3">Inventy</span>
         </div>
@@ -45,7 +48,7 @@
         <!-- Username -->
         <div>
           <label class="block text-sm font-semibold text-gray-700 mb-2">
-            Username<span class="text-red-500 ml-0.5">*</span>
+            Usernamee<span class="text-red-500 ml-0.5">*</span>
           </label>
           <input 
             type="text" 
@@ -123,19 +126,31 @@
     <!-- Decorative Elements -->
     <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2"></div>
     <div class="absolute bottom-0 left-0 w-96 h-96 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2"></div>
-    
+
+    <div class="flex justify-center flex-col items-center">
+      <!-- <div class="bg-white rounded-md"><img src="assets/images/logo/kmbi_logo.png" alt="KMBI logo" style="max-width: 200px; height: auto;"></div> -->
+
     <div class="max-w-md relative z-10">
       <div class="bg-white/10 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/20 p-10">
-        <div class="mb-6">
-          <svg class="w-12 h-12 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-          </svg>
+
+        <div
+          class="transition-opacity duration-500 ease-in-out"
+          [class.opacity-0]="isFading"
+          [class.opacity-100]="!isFading"
+        >
+          <p class="text-sm font-semibold text-white/90 mb-4">
+            {{ currentVerse.reference }}
+          </p>
+
+          <p class="text-xl text-white leading-relaxed font-medium">
+            “{{ currentVerse.text }}”
+          </p>
         </div>
-        <p class="text-sm font-semibold text-white/90 mb-4">Proverbs 16:3</p>
-        <p class="text-xl text-white leading-relaxed font-medium">
-          Commit to the Lord whatever you do, and he will establish your plans.
-        </p>
+
       </div>
     </div>
+
+    </div>
+
   </div>
 </div>

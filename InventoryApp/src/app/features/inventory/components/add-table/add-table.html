@@ -1,0 +1,80 @@
+<div *ngIf="!isLoading || rows.length > 0"
+     class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200">
+
+  <div class="overflow-x-auto">
+    <table class="min-w-full divide-y divide-gray-200">
+
+      <!-- HEADER -->
+      <thead>
+        <tr class="bg-gradient-to-r from-indigo-50 to-blue-50">
+
+          <th *ngFor="let col of columns"
+              class="px-6 py-4 text-left text-xs font-bold text-indigo-700 uppercase tracking-wider">
+            {{ col.label }}
+          </th>
+
+          <th class="px-6 py-4 text-left text-xs font-bold text-indigo-700 uppercase tracking-wider">
+            Actions
+          </th>
+
+        </tr>
+      </thead>
+
+      <!-- BODY -->
+      <tbody class="bg-white divide-y divide-gray-100">
+
+        <tr *ngFor="let row of rows"
+            class="hover:bg-gradient-to-r hover:from-indigo-50/50 hover:to-blue-50/50 transition-all duration-200">
+
+          <!-- DYNAMIC CELLS -->
+          <td *ngFor="let col of columns"
+              class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+
+            <!-- Boolean -->
+            <span *ngIf="col.type === 'boolean'"
+                  class="inline-flex px-3 py-1 rounded-full text-xs font-medium"
+                  [class.bg-green-100]="row[col.key]"
+                  [class.text-green-700]="row[col.key]"
+                  [class.bg-red-100]="!row[col.key]"
+                  [class.text-red-700]="!row[col.key]">
+              {{ row[col.key] ? 'Yes' : 'No' }}
+            </span>
+
+            <!-- Default -->
+            <span *ngIf="col.type !== 'boolean'">
+              {{ row[col.key] ?? '-' }}
+            </span>
+
+          </td>
+
+          <!-- ACTIONS -->
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+            <div class="flex gap-2">
+              <button
+                (click)="onEdit(row)"
+                class="px-4 py-2 bg-blue-50 text-blue-700 rounded-lg border border-blue-200 hover:bg-blue-100">
+                Edit
+              </button>
+
+              <button
+                (click)="onDelete(row)"
+                class="px-4 py-2 bg-red-50 text-red-700 rounded-lg border border-red-200 hover:bg-red-100">
+                Delete
+              </button>
+            </div>
+          </td>
+
+        </tr>
+
+        <!-- EMPTY STATE -->
+        <tr *ngIf="rows.length === 0">
+          <td [attr.colspan]="columns.length + 1"
+              class="px-6 py-16 text-center text-gray-500">
+            No data found
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+</div>

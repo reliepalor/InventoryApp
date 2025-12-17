@@ -3,10 +3,10 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { SidebarService } from '../../../services/sidebar.service';
+import { AddTableService, TableDefinition } from '../../../services/add-table.service';
 
 @Component({
   selector: 'app-sidebar',
-  // If you don't use Angular standalone components, remove 'standalone: true' and add this component to a module.
   standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './sidebar.html',
@@ -36,6 +36,7 @@ export class Sidebar implements OnInit {
   private authService = inject(AuthService);
   private router = inject(Router);
   private sidebarService = inject(SidebarService);
+  private tableService = inject(AddTableService);
 
   constructor() {
     // subscribe to service so multiple components share state
@@ -63,6 +64,17 @@ export class Sidebar implements OnInit {
     if (typeof window !== 'undefined') {
       this.applyResponsiveSidebar(window.innerWidth);
     }
+    this.loadCustomTables();
+  }
+
+  loadCustomTables() {
+    this.tableService.getAllTables().subscribe(tables => {
+      const customItems = tables.map(table => ({
+        label: table.name,
+        route: '/table/' + table.id
+      }));
+      this.maintenanceItems = [...this.maintenanceItems, ...customItems];
+    });
   }
 
   @HostListener('window:resize', ['$event'])

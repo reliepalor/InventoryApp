@@ -20,6 +20,16 @@ export const routes: Routes = [
         canActivate: [authGuard]
     },
     {
+        path: 'add-table',
+        loadComponent: () => import('./features/inventory/pages/add-table/add-table').then(m => m.AddTablePageComponent),
+        canActivate: [authGuard]
+    },
+    {
+        path: 'table/:id',
+        loadComponent: () => import('./features/inventory/pages/add-table/add-table').then(m => m.AddTablePageComponent),
+        canActivate: [authGuard]
+    },
+    {
         path: 'inventory',
         loadComponent: () => import('./features/inventory/pages/inventory/inventory').then(m => m.InventoryPageComponent),
         canActivate: [authGuard]

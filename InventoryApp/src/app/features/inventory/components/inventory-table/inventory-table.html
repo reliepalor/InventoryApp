@@ -1,68 +1,75 @@
-<!-- show table on md and larger -->
+<!-- container -->
 <div *ngIf="!isLoading || items.length > 0" class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200">
 
-  <!-- TABLE: visible on md+ -->
+  <!-- 🖥️ DESKTOP TABLE: visible on md+ -->
   <div class="overflow-x-auto hidden md:block">
     <table class="min-w-full divide-y divide-gray-200">
-      <thead>
+      <thead class="sticky top-0 z-10 bg-white">
         <tr class="bg-gradient-to-r from-indigo-50 to-blue-50">
-          <th class="px-6 py-4 text-left text-xs font-bold text-indigo-700 uppercase tracking-wider">
+          <!-- Tag Number -->
+          <th class="px-4 py-3 text-left text-xs font-bold text-indigo-700 uppercase tracking-wider">
             <div class="flex items-center gap-2">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
               </svg>
               Tag Number
             </div>
           </th>
 
-          <th class="px-6 py-4 text-left text-xs font-bold text-indigo-700 uppercase tracking-wider">
+          <!-- Date Purchased -->
+          <th class="px-4 py-3 text-left text-xs font-bold text-indigo-700 uppercase tracking-wider">
             <div class="flex items-center gap-2">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
               </svg>
               Date Purchased
             </div>
           </th>
 
-          <th class="px-6 py-4 text-left text-xs font-bold text-indigo-700 uppercase tracking-wider">
+          <!-- Department -->
+          <th class="px-4 py-3 text-left text-xs font-bold text-indigo-700 uppercase tracking-wider">
             <div class="flex items-center gap-2">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
               </svg>
               Department
             </div>
           </th>
 
-          <th class="px-6 py-4 text-left text-xs font-bold text-indigo-700 uppercase tracking-wider">
+          <!-- Assigned To -->
+          <th class="px-4 py-3 text-left text-xs font-bold text-indigo-700 uppercase tracking-wider">
             <div class="flex items-center gap-2">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
               </svg>
               Assigned To
             </div>
           </th>
 
-          <th class="px-6 py-4 text-left text-xs font-bold text-indigo-700 uppercase tracking-wider">
+          <!-- Type -->
+          <th class="px-4 py-3 text-left text-xs font-bold text-indigo-700 uppercase tracking-wider">
             <div class="flex items-center gap-2">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
               </svg>
               Type
             </div>
           </th>
 
-          <th class="px-6 py-4 text-left text-xs font-bold text-indigo-700 uppercase tracking-wider">
+          <!-- Brand -->
+          <th class="px-4 py-3 text-left text-xs font-bold text-indigo-700 uppercase tracking-wider">
             <div class="flex items-center gap-2">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/>
               </svg>
               Brand
             </div>
           </th>
 
-          <th class="px-6 py-4 text-left text-xs font-bold text-indigo-700 uppercase tracking-wider">
+          <!-- Actions -->
+          <th class="px-4 py-3 text-left text-xs font-bold text-indigo-700 uppercase tracking-wider">
             <div class="flex items-center gap-2">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4"/>
               </svg>
               Actions
@@ -72,48 +79,36 @@
       </thead>
 
       <tbody class="bg-white divide-y divide-gray-100">
+        <!-- Real items -->
         <tr *ngFor="let it of items; let i = index" class="hover:bg-gradient-to-r hover:from-indigo-50/50 hover:to-blue-50/50 transition-all duration-200 group">
-          <td class="px-6 py-4 whitespace-nowrap">
-            <div class="text-sm font-semibold text-gray-900">{{ it.tagNumber }}</div>
+          <td class="px-4 py-3 max-w-[10rem]">
+            <div class="text-sm font-semibold text-gray-900 truncate">{{ it.tagNumber }}</div>
           </td>
-
-          <td class="px-6 py-4 whitespace-nowrap">
-            <div class="text-sm font-medium text-gray-800">{{ it.datePurchased ? (it.datePurchased | date:'shortDate') : '-' }}</div>
+          <td class="px-4 py-3 max-w-[8rem]">
+            <div class="text-sm font-medium text-gray-800 truncate">{{ it.datePurchased ? (it.datePurchased | date:'shortDate') : '-' }}</div>
           </td>
-
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-            {{ it.department ?? '-' }}
-          </td>
-
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-            {{ it.assignedTo ?? '-' }}
-          </td>
-
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-            {{ it.type ?? '-' }}
-          </td>
-
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-            {{ it.brand ?? '-' }}
-          </td>
-
-          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+          <td class="px-4 py-3 max-w-[8rem] text-sm text-gray-700 truncate">{{ it.department ?? '-' }}</td>
+          <td class="px-4 py-3 max-w-[8rem] text-sm text-gray-700 truncate">{{ it.assignedTo ?? '-' }}</td>
+          <td class="px-4 py-3 max-w-[8rem] text-sm text-gray-700 truncate">{{ it.type ?? '-' }}</td>
+          <td class="px-4 py-3 max-w-[8rem] text-sm text-gray-700 truncate">{{ it.brand ?? '-' }}</td>
+          <td class="px-4 py-3 text-sm font-medium">
             <div class="flex items-center gap-2">
               <button
                 (click)="onEdit(it)"
                 [disabled]="isLoading"
-                class="inline-flex items-center gap-1.5 px-4 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-all duration-200 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed border border-blue-200 hover:border-blue-300 font-medium group-hover:shadow-md">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                aria-label="Edit {{ it.tagNumber }}"
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-all duration-200 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed border border-blue-200 hover:border-blue-300 font-medium group-hover:shadow-md">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                 </svg>
                 Edit
               </button>
-
               <button
                 (click)="onDelete(it)"
                 [disabled]="isLoading"
-                class="inline-flex items-center gap-1.5 px-4 py-2 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-all duration-200 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed border border-red-200 hover:border-red-300 font-medium group-hover:shadow-md">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                aria-label="Delete {{ it.tagNumber }}"
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-all duration-200 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed border border-red-200 hover:border-red-300 font-medium group-hover:shadow-md">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                 </svg>
                 Delete
@@ -122,89 +117,89 @@
           </td>
         </tr>
 
-        <tr *ngIf="items.length === 0">
-          <td colspan="7" class="px-6 py-16">
-            <div class="text-center">
-              <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
-                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                </svg>
-              </div>
-              <h3 class="text-lg font-semibold text-gray-900 mb-2">No inventory items found</h3>
-              <p class="text-gray-500 mb-4">Try adjusting your search or add a new inventory item to get started.</p>
+        <!-- ✅ EXAMPLE RECORD IN DESKTOP TABLE (only when empty & not loading) -->
+        <tr *ngIf="items.length === 0 && !isLoading" class="bg-emerald-50/40">
+          <td class="px-4 py-3 max-w-[10rem]">
+            <div class="text-sm font-semibold text-gray-900">INV-2025-001</div>
+          </td>
+          <td class="px-4 py-3 max-w-[8rem]">
+            <div class="text-sm font-medium text-gray-800">12/10/25</div>
+          </td>
+          <td class="px-4 py-3 max-w-[8rem] text-sm text-gray-700">Information Technology</td>
+          <td class="px-4 py-3 max-w-[8rem] text-sm text-gray-700">Maria Lopez</td>
+          <td class="px-4 py-3 max-w-[8rem] text-sm text-gray-700">Laptop</td>
+          <td class="px-4 py-3 max-w-[8rem] text-sm text-gray-700">Dell XPS 13</td>
+          <td class="px-4 py-3 text-sm font-medium">
+            <div class="flex items-center gap-2">
+              <button disabled class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-400 rounded-lg cursor-not-allowed border border-gray-200 font-medium">
+                Edit
+              </button>
+              <button disabled class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-400 rounded-lg cursor-not-allowed border border-gray-200 font-medium">
+                Delete
+              </button>
             </div>
           </td>
+        </tr>
+
+        <!-- Empty state row (fallback, though example covers it) -->
+        <tr *ngIf="items.length === 0 && isLoading">
+          <td colspan="7" class="px-6 py-16 text-center text-gray-500">Loading...</td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <!-- CARD LIST: visible on small screens (below md) -->
-  <div class="block md:hidden px-4 py-4 space-y-3">
-    <ng-container *ngIf="items.length > 0; else mobileEmpty">
-      <div *ngFor="let it of items; trackBy: trackByTag" class="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm">
-        <div class="flex items-start justify-between gap-4">
-          <div class="flex-1 min-w-0">
-            <div class="flex items-center justify-between gap-2">
-              <h4 class="text-sm font-semibold text-gray-900 truncate">{{ it.tagNumber }}</h4>
-              <span class="text-xs text-gray-500">{{ it.datePurchased ? (it.datePurchased | date:'shortDate') : '-' }}</span>
-            </div>
+  <!-- 📱 MOBILE/TABLET: NO HEADER ROW -->
+  <!-- (We remove the horizontal header chips entirely on mobile) -->
 
-            <div class="mt-2 grid grid-cols-2 gap-2 text-sm text-gray-700">
-              <div>
-                <div class="text-xs text-gray-500">Department</div>
-                <div class="font-medium">{{ it.department ?? '-' }}</div>
-              </div>
-
-              <div>
-                <div class="text-xs text-gray-500">Assigned To</div>
-                <div class="font-medium">{{ it.assignedTo ?? '-' }}</div>
-              </div>
-
-              <div>
-                <div class="text-xs text-gray-500">Type</div>
-                <div class="font-medium">{{ it.type ?? '-' }}</div>
-              </div>
-
-              <div>
-                <div class="text-xs text-gray-500">Brand</div>
-                <div class="font-medium">{{ it.brand ?? '-' }}</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Actions (stacked vertically on very small screens) -->
-          <div class="flex flex-col items-end gap-2">
-            <button
-              (click)="onEdit(it)"
-              [disabled]="isLoading"
-              class="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-all duration-200 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed border border-blue-200 hover:border-blue-300 font-medium">
-              Edit
-            </button>
-
-            <button
-              (click)="onDelete(it)"
-              [disabled]="isLoading"
-              class="inline-flex items-center gap-1 px-3 py-1.5 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-all duration-200 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed border border-red-200 hover:border-red-300 font-medium">
-              Delete
-            </button>
-          </div>
-        </div>
+  <!-- 📱 MOBILE/TABLET CARD LIST -->
+  <div class="block md:hidden px-4 pb-4 space-y-3">
+    <!-- Real items -->
+    <div *ngFor="let it of items; trackBy: trackByTag" 
+         class="border border-emerald-100 rounded-xl p-3.5 shadow-sm bg-emerald-50/30">
+      <div class="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-gray-700">
+        <span><span class="font-medium text-emerald-800">Tag:</span> {{ it.tagNumber }}</span>
+        <span><span class="font-medium text-emerald-800">Date:</span> {{ it.datePurchased ? (it.datePurchased | date:'shortDate') : '–' }}</span>
+        <span><span class="font-medium text-emerald-800">Dept:</span> {{ it.department ?? '–' }}</span>
+        <span><span class="font-medium text-emerald-800">To:</span> {{ it.assignedTo ?? '–' }}</span>
+        <span><span class="font-medium text-emerald-800">Type:</span> {{ it.type ?? '–' }}</span>
+        <span><span class="font-medium text-emerald-800">Brand:</span> {{ it.brand ?? '–' }}</span>
       </div>
-    </ng-container>
 
-    <ng-template #mobileEmpty>
-      <div class="py-16">
-        <div class="text-center">
-          <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
-            <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-            </svg>
-          </div>
-          <h3 class="text-lg font-semibold text-gray-900 mb-2">No inventory items found</h3>
-          <p class="text-gray-500 mb-4">Try adjusting your search or add a new inventory item to get started.</p>
-        </div>
+      <div class="flex justify-end gap-1.5 mt-2 pt-2 border-t border-emerald-100/60">
+        <button
+          (click)="onEdit(it)"
+          [disabled]="isLoading"
+          aria-label="Edit {{ it.tagNumber }}"
+          class="text-[11px] px-2 py-1 bg-emerald-100 text-emerald-800 rounded border border-emerald-200 hover:bg-emerald-200 disabled:opacity-50">
+          Edit
+        </button>
+        <button
+          (click)="onDelete(it)"
+          [disabled]="isLoading"
+          aria-label="Delete {{ it.tagNumber }}"
+          class="text-[11px] px-2 py-1 bg-rose-100 text-rose-800 rounded border border-rose-200 hover:bg-rose-200 disabled:opacity-50">
+          Delete
+        </button>
       </div>
-    </ng-template>
   </div>
+
+    <!-- ✅ EXAMPLE RECORD ON MOBILE (only when empty & not loading) -->
+    <div *ngIf="items.length === 0 && !isLoading"
+         class="border border-emerald-100 rounded-xl p-2 shadow-sm bg-emerald-50/30 mt-5">
+      <div class="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-gray-700">
+        <span><span class="font-medium text-emerald-800">Tag:</span> INV-2025-001</span>
+        <span><span class="font-medium text-emerald-800">Date:</span> 12/10/25</span>
+        <span><span class="font-medium text-emerald-800">Dept:</span> Information Technology</span>
+        <span><span class="font-medium text-emerald-800">To:</span> Maria Lopez</span>
+        <span><span class="font-medium text-emerald-800">Type:</span> Laptop</span>
+        <span><span class="font-medium text-emerald-800">Brand:</span> Dell XPS 13</span>
+      </div>
+      <div class="flex justify-end gap-1.5 mt-2 pt-2 border-t border-emerald-100/60">
+        <button disabled class="text-[11px] px-2 py-1 bg-gray-100 text-gray-500 rounded border border-gray-200 cursor-not-allowed">Edit</button>
+        <button disabled class="text-[11px] px-2 py-1 bg-gray-100 text-gray-500 rounded border border-gray-200 cursor-not-allowed">Delete</button>
+      </div>
+    </div>
+  </div>
+
 </div>

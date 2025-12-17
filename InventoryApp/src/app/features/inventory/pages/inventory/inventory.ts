@@ -5,8 +5,6 @@ import { FormsModule } from '@angular/forms';
 
 import { Navbar } from '../../components/navbar/navbar';
 import { Sidebar } from '../../components/sidebar/sidebar';
-import { InventoryTableComponent } from '../../components/inventory-table/inventory-table';
-
 import { SidebarService } from '../../../services/sidebar.service';
 import { InventoryService, InventoryItem } from '../../../services/inventory.service';
 import { BrandService, BrandItem } from '../../../services/brand.service';
@@ -16,7 +14,7 @@ type DepartmentItem = { id: number; name: string };
 @Component({
   selector: 'app-inventory',
   standalone: true,
-  imports: [CommonModule, FormsModule, Navbar, Sidebar, InventoryTableComponent],
+  imports: [CommonModule, FormsModule, Navbar, Sidebar],
   templateUrl: './inventory.html',
   styleUrls: ['./inventory.css']
 })
@@ -296,6 +294,20 @@ export class InventoryPageComponent implements OnInit {
   closeDeleteModal() {
     this.showDeleteModal = false;
     this.inventoryToDelete = null;
+  }
+
+  /* ---------- Event handlers ---------- */
+
+  onEdit(inv: InventoryItem) {
+    this.openEditForm(inv);
+  }
+
+  onDelete(inv: InventoryItem) {
+    this.deleteInventory(inv);
+  }
+
+  trackByTag(index: number, item: InventoryItem): string {
+    return item.tagNumber;
   }
 
   /* ---------- Helpers ---------- */
